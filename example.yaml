@@ -1,0 +1,18 @@
+# Categories are dictionary entries of list items.
+# List items are ordered from most liked to least liked.
+# Categories are ordered from most important to least important.
+task:
+- build new moon lander
+- do something moderately interesting
+- fill forms
+
+tool:
+- linux
+- mac
+- pointy rocks
+- windows
+
+money:
+- enough
+- little
+- nomoney

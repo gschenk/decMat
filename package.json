@@ -1,0 +1,25 @@
+{
+  "name": "decmat",
+  "version": "0.0.1",
+  "description": "This is a small job decission matrix tool.  It visualises categories and sorted lists from a yaml.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/gschenk/decMat.git"
+  },
+  "keywords": [
+    "decision",
+    "matrix",
+    "yaml",
+    "visualization"
+  ],
+  "author": "gerald schenk",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/gschenk/decMat/issues"
+  },
+  "homepage": "https://github.com/gschenk/decMat#readme"
+}
