@@ -1,7 +1,10 @@
 import http from 'http';
-import YmlDoc from './data.mjs';
+
+import readYmlData from './data';
 
 
+const inFilePath = './example.yaml';
+const YmlDoc = readYmlData(inFilePath);
 const ymlKeys = Object.keys(YmlDoc);
 
 console.log(YmlDoc);

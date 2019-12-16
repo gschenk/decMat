@@ -6,15 +6,16 @@ import fs from 'fs';
 // const fs = require('fs');
 
 // mutable variable to get it before try scope
-let YmlDoc = {};
 
-// safeLoad from js-yaml loads one document per yaml file
-try {
-  YmlDoc = yaml.safeLoad(fs.readFileSync('./example.yaml', 'utf8'));
-} catch (e) {
-  console.log(e);
+function readYmlData(inFilePath) {
+  let YmlDoc = {};
+  // safeLoad from js-yaml loads one document per yaml file
+  try {
+    YmlDoc = yaml.safeLoad(fs.readFileSync(inFilePath, 'utf8'));
+  } catch (e) {
+    console.log(e);
+  }
+  return YmlDoc;
 }
 
-const YamlDataObject = YmlDoc;
-
-export default YamlDataObject;
+export default readYmlData;
