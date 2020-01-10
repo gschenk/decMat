@@ -29,6 +29,10 @@
     "eslint-plugin-import": "^2.19.1"
   },
   "dependencies": {
-    "js-yaml": "^3.13.1"
+    "chai": "^4.2.0",
+    "js-yaml": "^3.13.1",
+    "mocha": "^7.0.0",
+    "mocha-esm": "^1.1.1",
+    "request": "^2.88.0"
   }
 }
