@@ -5,7 +5,7 @@
   "description": "This is a small job decission matrix tool.  It visualises categories and sorted lists from a yaml.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha './test/page.js'"
   },
   "repository": {
     "type": "git",
