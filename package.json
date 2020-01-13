@@ -1,5 +1,6 @@
 {
   "name": "decmat",
+  "type": "module",
   "version": "0.0.1",
   "description": "This is a small job decission matrix tool.  It visualises categories and sorted lists from a yaml.",
   "main": "index.js",

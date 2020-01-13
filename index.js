@@ -1,6 +1,6 @@
 import http from 'http';
 
-import readYmlData from './data';
+import readYmlData from './data.js';
 
 
 const inFilePath = './example.yaml';

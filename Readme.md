@@ -8,9 +8,15 @@ practices for JS.
 
 ## How to Run it
 Node 13 allows import for ES modules. However this turns of
-automatic resolution of extensions. Run node with
+automatic resolution of extensions.
+
+Unless one run node with
 `--es-module-specifier-resolution=node`
-to ameliorate this.
+the relative path and suffix of each imported file needs to
+be spelled out in source.
+
+This may be in conflict with best practices, for instance, the
+AirBnB style guide.
 
 ##Targets and Todos
 * set up linting and write AirBnB style code
