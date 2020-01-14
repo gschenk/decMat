@@ -1,14 +1,18 @@
 import readYmlData from './data.js';
 import DecisionObject from './core.js';
-import makeView from './view.js';
+import { makeView, Grid } from './view.js';
 
 const inFilePath = './example.yaml';
 
 const YmlDoc = new DecisionObject(readYmlData(inFilePath));
 
-
 console.log(YmlDoc);
-const outputString = `These are the cats: ${YmlDoc.cats} </br>
-  and these the values for 0: ${YmlDoc.entries(0)}`;
+
+
+const decMatItems = [...YmlDoc.cats, ...[0, 1].flatMap(YmlDoc.valsByRow)];
+
+const grid = new Grid(3);
+const outputString = `${grid.style} ${grid.container(grid.items(decMatItems))}`;
+
 
 makeView(outputString);
