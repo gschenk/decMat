@@ -8,11 +8,14 @@ const YmlDoc = new DecisionObject(readYmlData(inFilePath));
 
 console.log(YmlDoc);
 
+const grid = new Grid(YmlDoc.dimM);
 
-const decMatItems = [...YmlDoc.cats, ...[0, 1].flatMap(YmlDoc.valsByRow)];
+// put content strings together
+const contentHeaders = grid.items(0, YmlDoc.cats);
+const contentColumns = YmlDoc.zeroToM.flatMap((i) => grid.items(i + 1, YmlDoc.valsByColumn(i))).join('');
+const content = `${contentHeaders}${contentColumns}`;
 
-const grid = new Grid(3);
-const outputString = `${grid.style} ${grid.container(grid.items(decMatItems))}`;
+const outputString = `${grid.style} ${grid.container(content)}`;
 
 
 makeView(outputString);
