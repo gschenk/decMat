@@ -5,6 +5,7 @@
   "description": "This is a small job decission matrix tool.  It visualises categories and sorted lists from a yaml.",
   "main": "./src/index.js",
   "scripts": {
+    "test": "jest --verbose"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,11 @@
     "eslint-plugin-import": "^2.20.0"
   },
   "dependencies": {
+    "jest": "^24.9.0",
     "js-yaml": "^3.13.1",
     "request": "^2.88.0"
+  },
+  "jest": {
+    "testMatch": ["**/tests/*.js"]
   }
 }
