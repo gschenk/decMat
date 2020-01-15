@@ -18,12 +18,15 @@ be spelled out in source.
 This may be in conflict with best practices, for instance, the
 AirBnB style guide.
 
-##Targets and Todos
-* set up linting and write AirBnB style code
-* read input from yaml as structured data
-* write unit test
-* set up automated testing
-* set up automated documentation
-* prototype html/css output
-* modularise view, css components
-* make neat css output
+## Targets and Todos
+- [x] set up linting and write AirBnB style code (done)
+- [x] read input from yaml as structured data
+- [ ] write unit test
+- [ ] set up automated testing
+- [ ] set up automated documentation
+- [x] prototype html/css output
+- [x] modularise view, css components
+- [x] make neat css output
+- [ ] user specified input file name (or automated)
+- [ ] move layout options to config yaml
+- [ ] extend matrix items with weight

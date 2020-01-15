@@ -2,8 +2,8 @@ import http from 'http';
 
 // methods to generate a css m*n grid
 // .Grid :: Integer -> Object
-function Grid(bigM) {
-  const zeroToM = [...Array(bigM + 1).keys()];
+function Grid(dimM) {
+  const zeroToM = [...Array(dimM + 1).keys()];
 
   // gridItem :: String -> String
   const gridItem = (m) => (str) => `<div class="grid-item${m}">${str}</div>`;
@@ -16,11 +16,13 @@ function Grid(bigM) {
 
 
   // css styles
+
   // container holds all items
-  // The number of rows depends on matrix dimension M
-  const containerStyle = `.grid-container {
+  // argument number of columns (m)
+  // containerStyle :: Integer => String
+  const containerStyle = (m) => `.grid-container {
       display: grid;
-      grid-template-columns: ${'auto '.repeat(bigM)};
+      grid-template-columns: ${'auto '.repeat(m)};
       grid-auto-flow: row dense;
       background-color: #2196F3;
       padding: 10px;
@@ -34,7 +36,7 @@ function Grid(bigM) {
       padding: 10px;
     }`;
 
-  // css style for consecutive rows, restricting column to i
+  // css style for consecutive rows, restricting column to m
   // itemBodyStyle :: Integer -> String
   const itemBodyStyle = (m) => `.grid-item${m} {
       grid-column: ${m};
@@ -49,7 +51,7 @@ function Grid(bigM) {
   // to bigN elements
   // .style :: String -> String
   this.style = `<style>
-      ${containerStyle}
+      ${containerStyle(dimM)}
       ${zeroToM.flatMap(itemStyle).join('\n')}
     </style>`;
 }
