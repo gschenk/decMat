@@ -11,7 +11,7 @@ function Grid(dimM) {
   // .container :: String -> String
   this.container = (items) => `<div class="grid-container">${items}</div>`;
 
-  // .items :: [String] -> String
+  // .items :: Integer -> [String] -> String
   this.items = (n, a) => a.map(gridItem(n)).join('\n');
 
 

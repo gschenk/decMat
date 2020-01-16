@@ -1,0 +1,26 @@
+import chai from 'chai';
+import DecisionMatrixO from '../src/core.js';
+import { Grid } from '../src/view.js';
+
+const { expect } = chai;
+
+const testMat = new DecisionMatrixO({
+  k0: ['a0', 'a1'],
+  k1: ['b0', 'b1'],
+  k2: ['c0', 'c1', 'c2'],
+  k3: [],
+});
+
+describe('Core Methods', () => {
+  it('M dimension', () => expect(testMat.dimM).to.equal(4));
+  it('Values by m', () => expect(testMat.valsByColumn(1).join()).to.equal('b0,b1'));
+});
+
+describe('View, Grid methods', () => {
+  const testGrid = new Grid(2);
+  it('Grid.items output', () => {
+    const a = testGrid.items(2, ['a0', 'a1']);
+    const b = '<div class="grid-item2">a0</div>\n<div class="grid-item2">a1</div>';
+    expect(a).to.equal(b);
+  });
+});

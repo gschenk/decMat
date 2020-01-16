@@ -1,12 +1,12 @@
 import readYmlData from './data.js';
-import DecisionMatrixObjectect from './core.js';
+import DecisionMatrixO from './core.js';
 import { makeView, Grid } from './view.js';
 
 // define yaml input file
 const inFilePath = './example.yaml';
 
 // create object with data from yaml input and methods
-const doc = new DecisionMatrixObjectect(readYmlData(inFilePath));
+const doc = new DecisionMatrixO(readYmlData(inFilePath));
 
 console.log(doc);
 

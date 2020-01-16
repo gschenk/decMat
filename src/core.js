@@ -2,7 +2,7 @@
 //    data object contains decision matrix data and structure
 //    where each key is a category of the decision matrix
 //    and has an array of values
-function DecisionMatrixObjectect(data) {
+function DecisionMatrixO(data) {
   const cats = Object.keys(data);
 
   // dimM is the largest number of values assigned to any key cat of object o.
@@ -30,4 +30,4 @@ function DecisionMatrixObjectect(data) {
   this.valsByColumn = valsByColumn(data);
 }
 
-export default DecisionMatrixObjectect;
+export default DecisionMatrixO;
