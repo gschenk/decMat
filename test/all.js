@@ -1,6 +1,6 @@
 import chai from 'chai';
 import DecisionMatrixO from '../src/core.js';
-import { Grid } from '../src/view.js';
+import { Grid, gridStyleO } from '../src/view.js';
 
 const { expect } = chai;
 
@@ -17,7 +17,16 @@ describe('Core Methods', () => {
 });
 
 describe('View, Grid methods', () => {
-  const testGrid = new Grid(2);
+  it('all keys present in gridStyleO', () => {
+    const a = Object.keys(gridStyleO);
+    const b = [
+      'containerStyle',
+      'itemHeadStyle',
+      'itemBodyStyle',
+    ];
+    expect(a.join()).to.equal(b.join());
+  });
+  const testGrid = new Grid(2, gridStyleO);
   it('Grid.items output', () => {
     const a = testGrid.items(2, ['a0', 'a1']);
     const b = '<div class="grid-item2">a0</div>\n<div class="grid-item2">a1</div>';
