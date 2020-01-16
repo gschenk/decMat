@@ -31,24 +31,27 @@ const gridStyleO = {
 };
 Object.freeze(gridStyleO);
 
+const gridItemsO = {
+  // gridItem :: String -> String
+  gridItem: (m) => (s) => `<div class="grid-item${m}">${s}</div>`,
+  // makeContainerStr :: String -> String
+  makeContainerStr: (s) => `<div class="grid-container">${s}</div>`,
+};
+Object.freeze(gridItemsO);
 
 // methods to generate a css m*n grid
 // .Grid :: Integer -> Object
-function Grid(dimM, strObj) {
+function Grid(dimM, styleO, itemsO) {
   // strings and functions to set css style
   const {
     containerStyle,
     itemHeadStyle,
     itemBodyStyle,
-  } = strObj;
+  } = styleO;
 
+  const { gridItem, makeContainerStr } = itemsO;
   const zeroToM = [...Array(dimM + 1).keys()];
-
-  // gridItem :: String -> String
-  const gridItem = (m) => (str) => `<div class="grid-item${m}">${str}</div>`;
-
-  // .container :: String -> String
-  this.container = (items) => `<div class="grid-container">${items}</div>`;
+  this.container = makeContainerStr;
 
   // .items :: Integer -> [String] -> String
   this.items = (n, a) => a.map(gridItem(n)).join('\n');
@@ -75,4 +78,9 @@ function makeView(content) {
   }).listen(8080);
 }
 
-export { Grid, makeView, gridStyleO };
+export {
+  Grid,
+  makeView,
+  gridStyleO,
+  gridItemsO,
+};

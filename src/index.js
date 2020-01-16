@@ -1,6 +1,11 @@
 import readYmlData from './data.js';
 import DecisionMatrixO from './core.js';
-import { makeView, Grid, gridStyleO } from './view.js';
+import {
+  Grid,
+  makeView,
+  gridStyleO,
+  gridItemsO,
+} from './view.js';
 
 console.log(gridStyleO);
 
@@ -13,7 +18,7 @@ const doc = new DecisionMatrixO(readYmlData(inFilePath));
 console.log(doc);
 
 // create object with methods to format css grid
-const grid = new Grid(doc.dimM, gridStyleO);
+const grid = new Grid(doc.dimM, gridStyleO, gridItemsO);
 
 // put content strings together
 const contentHeaders = grid.items(0, doc.cats);
