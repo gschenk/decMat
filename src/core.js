@@ -1,15 +1,33 @@
-// constructor
-function DecisionObject(o) {
-  const cats = Object.keys(o);
-  this.cats = cats;
+// constructor, takes object data as argument
+//    data object contains decision matrix data and structure
+//    where each key is a category of the decision matrix
+//    and has an array of values
+function DecisionMatrixO(data) {
+  const cats = Object.keys(data);
+
+  // dimM is the largest number of values assigned to any key cat of object o.
+  const dimM = cats.length;
+
+  // array [0..i-1]
+  // zeroToI :: Integer -> [Integer]
+  const zeroToI = (i) => [...Array(i).keys()];
 
   // access values by number of n of category.
-  this.valsByColumn = (m) => o[cats[m]];
-  this.valsByRow = (n) => cats.map((m) => (o[m])[n]);
+  // valsByColumn :: Object -> Integer -> [String]
+  const valsByColumn = (o) => (m) => o[cats[m]];
 
-  this.dimX = Object.keys(o).length;
-  // the largest number of values assigned to any key cat of object o.
-  this.dimY = Math.max(...cats.map((k) => o[k].length));
+  // properties and methods
+  // this.cats :: [String]
+  this.cats = cats;
+
+  // this.dimM :: Integer
+  this.dimM = dimM;
+
+  // this zeroToM :: [Integer]
+  this.zeroToM = zeroToI(dimM);
+
+  // this.valsByColumn :: Integer -> [String]
+  this.valsByColumn = valsByColumn(data);
 }
 
-export default DecisionObject;
+export default DecisionMatrixO;

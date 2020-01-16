@@ -1,18 +1,24 @@
 import readYmlData from './data.js';
-import DecisionObject from './core.js';
+import DecisionMatrixO from './core.js';
 import { makeView, Grid } from './view.js';
 
+// define yaml input file
 const inFilePath = './example.yaml';
 
-const YmlDoc = new DecisionObject(readYmlData(inFilePath));
+// create object with data from yaml input and methods
+const doc = new DecisionMatrixO(readYmlData(inFilePath));
 
-console.log(YmlDoc);
+console.log(doc);
 
+// create object with methods to format css grid
+const grid = new Grid(doc.dimM);
 
-const decMatItems = [...YmlDoc.cats, ...[0, 1].flatMap(YmlDoc.valsByRow)];
+// put content strings together
+const contentHeaders = grid.items(0, doc.cats);
+const contentColumns = doc.zeroToM.flatMap((i) => grid.items(i + 1, doc.valsByColumn(i))).join('');
+const content = `${contentHeaders}\n${contentColumns}`;
 
-const grid = new Grid(3);
-const outputString = `${grid.style} ${grid.container(grid.items(decMatItems))}`;
+const outputString = `${grid.style}\n${grid.container(content)}`;
 
-
+// start server and output html
 makeView(outputString);
