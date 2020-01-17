@@ -31,6 +31,7 @@ const gridStyleO = {
 };
 Object.freeze(gridStyleO);
 
+
 const gridItemsO = {
   // gridItem :: String -> String
   gridItem: (m) => (s) => `<div class="grid-item${m}">${s}</div>`,
@@ -39,33 +40,38 @@ const gridItemsO = {
 };
 Object.freeze(gridItemsO);
 
+
 // methods to generate a css m*n grid
 // .Grid :: Integer -> Object
-function Grid(dimM, styleO, itemsO) {
-  // strings and functions to set css style
-  const {
-    containerStyle,
-    itemHeadStyle,
-    itemBodyStyle,
-  } = styleO;
+class Grid {
+  constructor(dimM, styleO, itemsO) {
+    // strings and functions to set css style
+    const {
+      containerStyle,
+      itemHeadStyle,
+      itemBodyStyle,
+    } = styleO;
 
-  const { gridItem, makeContainerStr } = itemsO;
-  const zeroToM = [...Array(dimM + 1).keys()];
-  this.container = makeContainerStr;
+    const { gridItem, makeContainerStr } = itemsO;
+    const zeroToM = [...Array(dimM + 1).keys()];
 
-  // .items :: Integer -> [String] -> String
-  this.items = (n, a) => a.map(gridItem(n)).join('\n');
+    // container :: String -> String
+    this.container = (str) => makeContainerStr(str);
 
-  // itemStyle :: Integer -> ( Integer -> Function )
-  const itemStyle = (m) => (m === 0 ? itemHeadStyle : itemBodyStyle(m));
+    // .items :: Integer -> [String] -> String
+    this.items = (n, a) => a.map(gridItem(n)).join('\n');
 
-  // Put elements of css grid style together, create itemStyle elements up
-  // to bigN elements
-  // .style :: String -> String
-  this.style = `<style>
-      ${containerStyle(dimM)}
-      ${zeroToM.flatMap(itemStyle).join('\n')}
-    </style>`;
+    // itemStyle :: Integer -> ( Integer -> Function )
+    const itemStyle = (m) => (m === 0 ? itemHeadStyle : itemBodyStyle(m));
+
+    // Put elements of css grid style together, create itemStyle elements up
+    // to bigN elements
+    // .style :: String
+    this.style = `<style>
+        ${containerStyle(dimM)}
+        ${zeroToM.flatMap(itemStyle).join('\n')}
+      </style>`;
+  }
 }
 
 
