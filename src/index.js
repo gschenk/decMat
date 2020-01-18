@@ -1,12 +1,22 @@
-import readYmlData from './data.js';
+import {
+  checkArgv,
+  readYmlData,
+} from './data.js';
 import DecisionMatrixO from './core.js';
 import { makeView, Grid } from './view.js';
 
+const foobar = checkArgv();
+
 // define yaml input file
-const inFilePath = './example.yaml';
+const inFilePath = (o = foobar) => {
+  if (o.stdin) return 0;
+  if (o.file) return o.file;
+  return './example.yaml';
+};
+console.log(`Input file: ${foobar.stdin ? 'STDIN' : inFilePath()}`);
 
 // create object with data from yaml input and methods
-const doc = new DecisionMatrixO(readYmlData(inFilePath));
+const doc = new DecisionMatrixO(readYmlData(inFilePath()));
 
 console.log(doc);
 
