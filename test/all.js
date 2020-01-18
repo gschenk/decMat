@@ -21,6 +21,7 @@ describe('View, Grid methods', () => {
     const a = Object.keys(gridStyleO);
     const b = [
       'containerStyle',
+      'itemTopLegendStyle',
       'itemHeadStyle',
       'itemBodyStyle',
     ];
@@ -30,6 +31,8 @@ describe('View, Grid methods', () => {
   it('all keys present in gridItemsO', () => {
     const a = Object.keys(gridItemsO);
     const b = [
+      'topLegendDefault',
+      'itemTopLegend',
       'gridItem',
       'makeContainerStr',
     ];

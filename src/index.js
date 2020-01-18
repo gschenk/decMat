@@ -31,9 +31,10 @@ console.log(doc);
 const grid = new Grid(doc.dimM, gridStyleO, gridItemsO);
 
 // put content strings together
+const contentTopLegend = grid.topLegend();
 const contentHeaders = grid.items(0, doc.cats);
 const contentColumns = doc.zeroToM.flatMap((i) => grid.items(i + 1, doc.valsByColumn(i))).join('');
-const content = `${contentHeaders}\n${contentColumns}`;
+const content = `${contentTopLegend}${contentHeaders}\n${contentColumns}`;
 
 const outputString = `${grid.style}\n${grid.container(content)}`;
 

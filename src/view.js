@@ -14,11 +14,20 @@ const gridStyleO = {
       padding: 10px;
       grid-gap: 20px;
     }`,
+  // css style for top legend of grid
+  // itemTopLegendStyle :: String
+  itemTopLegendStyle: `.grid-top-legend{
+      background-color: rgba(255, 255, 255, 0.3);
+      grid-row: 1;
+      grid-column-start: 1;
+      grid-column-end: -1;
+      padding: 10px;
+    }`,
   // css style for first row of grid
   // itemHeadStyle :: String
   itemHeadStyle: `.grid-item0 {
       background-color: rgba(255, 255, 255, 0.9);
-      grid-row: 1;
+      grid-row: 2;
       padding: 10px;
     }`,
   // css style for consecutive rows, restricting column to m
@@ -33,6 +42,8 @@ Object.freeze(gridStyleO);
 
 
 const gridItemsO = {
+  topLegendDefault: '&longleftarrow; Priority',
+  itemTopLegend: (s) => `<div class="grid-top-legend">${s}</div>`,
   // gridItem :: String -> String
   gridItem: (m) => (s) => `<div class="grid-item${m}">${s}</div>`,
   // makeContainerStr :: String -> String
@@ -48,12 +59,19 @@ class Grid {
     // strings and functions to set css style
     const {
       containerStyle,
+      itemTopLegendStyle,
       itemHeadStyle,
       itemBodyStyle,
     } = styleO;
 
-    const { gridItem, makeContainerStr } = itemsO;
+    const {
+      topLegendDefault,
+      itemTopLegend,
+      gridItem,
+      makeContainerStr,
+    } = itemsO;
     const zeroToM = [...Array(dimM + 1).keys()];
+    this.topLegend = (s = topLegendDefault) => itemTopLegend(s);
 
     // container :: String -> String
     this.container = (str) => makeContainerStr(str);
@@ -69,6 +87,7 @@ class Grid {
     // .style :: String
     this.style = `<style>
         ${containerStyle(dimM)}
+        ${itemTopLegendStyle}\n
         ${zeroToM.flatMap(itemStyle).join('\n')}
       </style>`;
   }
