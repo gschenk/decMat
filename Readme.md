@@ -33,6 +33,16 @@ be spelled out in source.
 This may be in conflict with best practices, for instance, the
 AirBnB style guide.
 
+An argument containing path and name of an input file xor the 
+'-' sign to read from STDIN are supported.
+
+From the project directory run as
+`> node ./src/index.js [myfile.yaml]`
+or with the '-' argument to read from STDIN
+`node ./src/index.js - `
+without any arguments the default example.yaml will be shown.
+
+
 ## Testing
 I cannot get Jest to run with ES6+.  Apparently, there is no
 ES module support yet since nodeJS API is not ready for it.
@@ -50,7 +60,7 @@ in the script section in package.json.
 - [x] prototype html/css output
 - [x] modularise view, css components
 - [x] make neat css output
-- [ ] user specified input file name (or automated)
+- [x] user specified input file name (or automated)
 
 ### Possible Extensions
 - [ ] move layout options to config yaml
