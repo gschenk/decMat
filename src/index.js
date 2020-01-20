@@ -25,11 +25,13 @@ console.log(doc);
 const grid = new Grid(doc.dimN);
 
 // put content strings together
-const contentHeaders = grid.items(0, doc.cats);
-const contentColumns = doc.zeroToN.flatMap((i) => grid.items(i + 1, doc.valsByColumn(i))).join('');
-const content = `${contentHeaders}\n${contentColumns}`;
+const content = () => {
+  const headers = grid.items(0, doc.cats);
+  const cols = grid.assemble(doc.valsByColumn, grid.items);
+  return `${headers}\n${cols}`;
+};
 
-const outputString = `${grid.style}\n${grid.container(content)}`;
+const outputString = `${grid.style}\n${grid.container(content())}`;
 
 // start server and output html
 

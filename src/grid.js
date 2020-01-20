@@ -51,7 +51,7 @@ class Grid {
       itemBody,
     } = style;
 
-    const zeroToN = [...Array(dimN + 1).keys()];
+    const zeroToI = (i) => [...Array(i).keys()];
 
     // this.container :: String -> String
     this.container = (s) => divs.container(s);
@@ -64,11 +64,20 @@ class Grid {
 
     // Put elements of css grid style together, create itemStyle elements up
     // to dimN elements
-    // .style :: String
-    this.style = `<style>
+    // assembleStyle :: Integer -> String
+    const assembleStyle = (i) => `<style>
         ${container(dimN)}
-        ${zeroToN.flatMap(itemStyle).join('\n')}
+        ${zeroToI(i + 1).flatMap(itemStyle).join('\n')}
       </style>`;
+
+    // this.style :: String
+    this.style = assembleStyle(dimN);
+
+    // assembleDivs :: Integer -> Function -> String
+    const assembleDivs = (i) => (f) => zeroToI(i).flatMap((k) => this.items(k + 1, f(k))).join('');
+
+    // this.assemble :: Function -> String
+    this.assemble = assembleDivs(dimN);
   }
 }
 

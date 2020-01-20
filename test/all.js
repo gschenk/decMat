@@ -25,6 +25,7 @@ describe('View, Grid methods', () => {
       'style',
       'items',
       'container',
+      'assemble',
     ];
     expect(b.map((s) => a.includes(s)));
   });
