@@ -1,3 +1,4 @@
+import http from 'http';
 import {
   checkArgv,
   readYmlData,
@@ -5,7 +6,6 @@ import {
 import DecisionMatrixO from './core.js';
 import {
   Grid,
-  makeView,
   gridStyleO,
   gridItemsO,
 } from './view.js';
@@ -39,4 +39,14 @@ const content = `${contentTopLegend}${contentHeaders}\n${contentColumns}`;
 const outputString = `${grid.style}\n${grid.container(content)}`;
 
 // start server and output html
+
+// creating a server with one page
+function makeView(str) {
+  http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.write(str);
+    res.end();
+  }).listen(8080);
+}
+
 makeView(outputString);

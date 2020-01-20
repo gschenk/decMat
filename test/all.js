@@ -17,7 +17,7 @@ describe('Core Methods', () => {
 });
 
 describe('View, Grid methods', () => {
-  it('all keys present in gridStyleO', () => {
+  it('all required keys present in gridStyleO', () => {
     const a = Object.keys(gridStyleO);
     const b = [
       'containerStyle',
@@ -25,10 +25,10 @@ describe('View, Grid methods', () => {
       'itemHeadStyle',
       'itemBodyStyle',
     ];
-    expect(a.join()).to.equal(b.join());
+    expect(b.map((s) => a.includes(s)));
   });
 
-  it('all keys present in gridItemsO', () => {
+  it('all required keys present in gridItemsO', () => {
     const a = Object.keys(gridItemsO);
     const b = [
       'topLegendDefault',
@@ -36,7 +36,7 @@ describe('View, Grid methods', () => {
       'gridItem',
       'makeContainerStr',
     ];
-    expect(a.join()).to.equal(b.join());
+    expect(b.map((s) => a.includes(s)));
   });
 
   const testGrid = new Grid(2, gridStyleO, gridItemsO);
