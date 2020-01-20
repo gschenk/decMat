@@ -1,5 +1,4 @@
-import http from 'http';
-
+// provides css strings and functions to build make an html page with grid
 
 // css styles
 const gridStyleO = {
@@ -75,18 +74,8 @@ class Grid {
 }
 
 
-// creating the server with one page
-function makeView(content) {
-  http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.write(content);
-    res.end();
-  }).listen(8080);
-}
-
 export {
   Grid,
-  makeView,
   gridStyleO,
   gridItemsO,
 };
