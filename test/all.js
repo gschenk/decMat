@@ -23,6 +23,7 @@ describe('View, Grid methods', () => {
     const b = [
       'containerStyle',
       'itemTopLegendStyle',
+      'itemLeftLegendStyle',
       'itemHeadStyle',
       'itemBodyStyle',
     ];
@@ -40,7 +41,7 @@ describe('View, Grid methods', () => {
     expect(b.map((s) => a.includes(s)));
   });
 
-  const testGrid = new Grid(2, gridStyleO, gridItemsO);
+  const testGrid = new Grid(2, 2, gridStyleO, gridItemsO);
   it('Grid.items output', () => {
     const a = testGrid.items(2, ['a0', 'a1']);
     const b = '<div class="grid-item2">a0</div>\n<div class="grid-item2">a1</div>';

@@ -31,7 +31,7 @@ function DecisionMatrixO(data) {
   this.dim = { M: dimM(data), N: dimN };
 
   // this zeroToM :: [Integer]
-  this.zeroToM = zeroToI(dimM);
+  this.zeroToN = zeroToI(dimN);
 
   // this.valsByColumn :: Integer -> [String]
   this.valsByColumn = valsByColumn(data);
