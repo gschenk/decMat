@@ -6,7 +6,11 @@ function DecisionMatrixO(data) {
   const cats = Object.keys(data);
 
   // dimM is the largest number of values assigned to any key cat of object o.
-  const dimM = cats.length;
+  const dimN = cats.length;
+
+  // function to get max number of entries per column
+  // dimM :: Object => Integer
+  const dimM = (o) => Math.max(...cats.map((k) => o[k].length));
 
   // array [0..i-1]
   // zeroToI :: Integer -> [Integer]
@@ -21,10 +25,13 @@ function DecisionMatrixO(data) {
   this.cats = cats;
 
   // this.dimM :: Integer
-  this.dimM = dimM;
+  this.dimN = dimN;
+
+  // this.dimM:: Integer
+  this.dimM = dimM(data);
 
   // this zeroToM :: [Integer]
-  this.zeroToM = zeroToI(dimM);
+  this.zeroToN = zeroToI(dimN);
 
   // this.valsByColumn :: Integer -> [String]
   this.valsByColumn = valsByColumn(data);

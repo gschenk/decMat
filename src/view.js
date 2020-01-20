@@ -43,7 +43,7 @@ Object.freeze(gridItemsO);
 // methods to generate a css m*n grid
 // .Grid :: Integer -> Object
 class Grid {
-  constructor(dimM, styleO, itemsO) {
+  constructor(dimN, styleO, itemsO) {
     // strings and functions to set css style
     const {
       containerStyle,
@@ -52,7 +52,7 @@ class Grid {
     } = styleO;
 
     const { gridItem, makeContainerStr } = itemsO;
-    const zeroToM = [...Array(dimM + 1).keys()];
+    const zeroToN = [...Array(dimN + 1).keys()];
 
     // container :: String -> String
     this.container = (str) => makeContainerStr(str);
@@ -67,8 +67,8 @@ class Grid {
     // to bigN elements
     // .style :: String
     this.style = `<style>
-        ${containerStyle(dimM)}
-        ${zeroToM.flatMap(itemStyle).join('\n')}
+        ${containerStyle(dimN)}
+        ${zeroToN.flatMap(itemStyle).join('\n')}
       </style>`;
   }
 }

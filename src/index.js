@@ -28,11 +28,11 @@ const doc = new DecisionMatrixO(readYmlData(inFilePath()));
 console.log(doc);
 
 // create object with methods to format css grid
-const grid = new Grid(doc.dimM, gridStyleO, gridItemsO);
+const grid = new Grid(doc.dimN, gridStyleO, gridItemsO);
 
 // put content strings together
 const contentHeaders = grid.items(0, doc.cats);
-const contentColumns = doc.zeroToM.flatMap((i) => grid.items(i + 1, doc.valsByColumn(i))).join('');
+const contentColumns = doc.zeroToN.flatMap((i) => grid.items(i + 1, doc.valsByColumn(i))).join('');
 const content = `${contentHeaders}\n${contentColumns}`;
 
 const outputString = `${grid.style}\n${grid.container(content)}`;
