@@ -28,7 +28,7 @@ const doc = new DecisionMatrixO(readYmlData(inFilePath()));
 console.log(doc);
 
 // create object with methods to format css grid
-const grid = new Grid(doc.dimM, gridStyleO, gridItemsO);
+const grid = new Grid(doc.dimN, gridStyleO, gridItemsO);
 
 // put content strings together
 const contentTopLegend = grid.topLegend();

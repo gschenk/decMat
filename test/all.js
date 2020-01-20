@@ -12,7 +12,8 @@ const testMat = new DecisionMatrixO({
 });
 
 describe('Core Methods', () => {
-  it('M dimension', () => expect(testMat.dimM).to.equal(4));
+  it('M dimension', () => expect(testMat.dimM).to.equal(3));
+  it('N dimension', () => expect(testMat.dimN).to.equal(4));
   it('Values by m', () => expect(testMat.valsByColumn(1).join()).to.equal('b0,b1'));
 });
 
