@@ -1,6 +1,6 @@
-import chai from 'chai';
-import DecisionMatrixO from '../src/core.js';
-import Grid from '../src/grid.js';
+const chai = require('chai');
+const DecisionMatrixO = require('../src/core.js');
+const Grid = require('../src/grid.js');
 
 const { expect } = chai;
 

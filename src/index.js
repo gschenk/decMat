@@ -1,10 +1,12 @@
-import http from 'http';
-import {
+const http = require('http');
+
+const {
   checkArgv,
   readYmlData,
-} from './data.js';
-import DecisionMatrixO from './core.js';
-import Grid from './grid.js';
+} = require('./data.js');
+
+const DecisionMatrixO = require('./core.js');
+const Grid = require('./grid.js');
 
 const foobar = checkArgv();
 

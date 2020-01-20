@@ -1,6 +1,6 @@
 // reads content from yaml and provides object with its contents
-import yaml from 'js-yaml';
-import fs from 'fs';
+const yaml = require('js-yaml');
+const fs = require('fs');
 
 // const yaml = require('js-yaml');
 // const fs = require('fs');
@@ -51,8 +51,7 @@ function readYmlData(inFilePath) {
   }
   return YmlDoc;
 }
-
-export {
+module.exports = {
   checkArgv,
   readYmlData,
 };

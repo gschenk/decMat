@@ -37,4 +37,4 @@ function DecisionMatrixO(data) {
   this.valsByColumn = valsByColumn(data);
 }
 
-export default DecisionMatrixO;
+module.exports = DecisionMatrixO;

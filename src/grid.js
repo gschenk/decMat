@@ -72,4 +72,4 @@ class Grid {
   }
 }
 
-export default Grid;
+module.exports = Grid;
