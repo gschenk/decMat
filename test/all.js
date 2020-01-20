@@ -1,6 +1,6 @@
 import chai from 'chai';
 import DecisionMatrixO from '../src/core.js';
-import { Grid, gridStyleO, gridItemsO } from '../src/grid.js';
+import Grid from '../src/grid.js';
 
 const { expect } = chai;
 
@@ -18,29 +18,31 @@ describe('Core Methods', () => {
 });
 
 describe('View, Grid methods', () => {
-  it('all required keys present in gridStyleO', () => {
-    const a = Object.keys(gridStyleO);
+  const grid = new Grid(2);
+  it('all required methods provided by Grid', () => {
+    const a = Object.keys(grid);
     const b = [
-      'containerStyle',
-      'itemHeadStyle',
-      'itemBodyStyle',
+      'style',
+      'items',
+      'container',
     ];
     expect(b.map((s) => a.includes(s)));
   });
 
-  it('all required keys present in gridItemsO', () => {
-    const a = Object.keys(gridItemsO);
-    const b = [
-      'gridItem',
-      'makeContainerStr',
-    ];
-    expect(b.map((s) => a.includes(s)));
-  });
-
-  const testGrid = new Grid(2, gridStyleO, gridItemsO);
-  it('Grid.items output', () => {
-    const a = testGrid.items(2, ['a0', 'a1']);
+  console.log(typeof grid.style);
+  it('Grid.items function', () => {
+    const a = grid.items(2, ['a0', 'a1']);
     const b = '<div class="grid-item2">a0</div>\n<div class="grid-item2">a1</div>';
+    expect(a).to.equal(b);
+  });
+  it('Grid.continer function', () => {
+    const a = grid.container('foobar');
+    const b = '<div class="grid-container">foobar</div>';
+    expect(a).to.equal(b);
+  });
+  it('Grid.style is a String', () => {
+    const a = typeof grid.style;
+    const b = 'string';
     expect(a).to.equal(b);
   });
 });

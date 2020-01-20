@@ -1,11 +1,11 @@
 // provides css strings and functions to build make an html page with grid
 
 // css styles
-const gridStyleO = {
-  // container holds all items
+const style = {
+  // container holds all divs
   // argument number of columns (m)
-  // containerStyle :: Integer => String
-  containerStyle: (m) => `.grid-container {
+  // container :: Integer => String
+  container: (m) => `.grid-container {
       display: grid;
       grid-template-columns: ${'auto '.repeat(m)};
       grid-auto-flow: row dense;
@@ -14,68 +14,59 @@ const gridStyleO = {
       grid-gap: 20px;
     }`,
   // css style for first row of grid
-  // itemHeadStyle :: String
-  itemHeadStyle: `.grid-item0 {
+  // itemHead :: String
+  itemHead: `.grid-item0 {
       background-color: rgba(255, 255, 255, 0.9);
       grid-row: 1;
       padding: 10px;
     }`,
   // css style for consecutive rows, restricting column to m
-  // itemBodyStyle :: Integer -> String
-  itemBodyStyle: (m) => `.grid-item${m} {
+  // itemBody :: Integer -> String
+  itemBody: (m) => `.grid-item${m} {
       grid-column: ${m};
       background-color: rgba(255, 255, 255, 0.7);
       padding: 10px;
     }`,
 };
-Object.freeze(gridStyleO);
+Object.freeze(style);
 
 
-const gridItemsO = {
-  // gridItem :: String -> String
-  gridItem: (m) => (s) => `<div class="grid-item${m}">${s}</div>`,
-  // makeContainerStr :: String -> String
-  makeContainerStr: (s) => `<div class="grid-container">${s}</div>`,
+const divs = {
+  // item :: String -> String
+  item: (m) => (s) => `<div class="grid-item${m}">${s}</div>`,
+  // container :: String -> String
+  container: (s) => `<div class="grid-container">${s}</div>`,
 };
-Object.freeze(gridItemsO);
+Object.freeze(divs);
 
 
-// methods to generate a css m*n grid
-// .Grid :: Integer -> Object
-class Grid {
-  constructor(dimN, styleO, itemsO) {
-    // strings and functions to set css style
-    const {
-      containerStyle,
-      itemHeadStyle,
-      itemBodyStyle,
-    } = styleO;
+// Grid class provides methods to generate a css m*n grid
+// constructor:
+// Grid :: Integer -> Object
+export default function (dimN) {
+  // strings and functions to set css style
+  const {
+    container,
+    itemHead,
+    itemBody,
+  } = style;
 
-    const { gridItem, makeContainerStr } = itemsO;
-    const zeroToN = [...Array(dimN + 1).keys()];
+  const zeroToN = [...Array(dimN + 1).keys()];
 
-    // container :: String -> String
-    this.container = (str) => makeContainerStr(str);
+  // this.container :: String -> String
+  this.container = (s) => divs.container(s);
 
-    // .items :: Integer -> [String] -> String
-    this.items = (n, a) => a.map(gridItem(n)).join('\n');
+  // this.items :: Integer -> [String] -> String
+  this.items = (n, a) => a.map(divs.item(n)).join('\n');
 
-    // itemStyle :: Integer -> ( Integer -> Function )
-    const itemStyle = (m) => (m === 0 ? itemHeadStyle : itemBodyStyle(m));
+  // this.itemStyle :: Integer -> ( Integer -> Function )
+  const itemStyle = (n) => (n === 0 ? itemHead : itemBody(n));
 
-    // Put elements of css grid style together, create itemStyle elements up
-    // to bigN elements
-    // .style :: String
-    this.style = `<style>
-        ${containerStyle(dimN)}
-        ${zeroToN.flatMap(itemStyle).join('\n')}
-      </style>`;
-  }
+  // Put elements of css grid style together, create itemStyle elements up
+  // to dimN elements
+  // .style :: String
+  this.style = `<style>
+      ${container(dimN)}
+      ${zeroToN.flatMap(itemStyle).join('\n')}
+    </style>`;
 }
-
-
-export {
-  Grid,
-  gridStyleO,
-  gridItemsO,
-};

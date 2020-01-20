@@ -4,13 +4,7 @@ import {
   readYmlData,
 } from './data.js';
 import DecisionMatrixO from './core.js';
-import {
-  Grid,
-  gridStyleO,
-  gridItemsO,
-} from './grid.js';
-
-console.log(gridStyleO);
+import Grid from './grid.js';
 
 const foobar = checkArgv();
 
@@ -28,7 +22,7 @@ const doc = new DecisionMatrixO(readYmlData(inFilePath()));
 console.log(doc);
 
 // create object with methods to format css grid
-const grid = new Grid(doc.dimN, gridStyleO, gridItemsO);
+const grid = new Grid(doc.dimN);
 
 // put content strings together
 const contentHeaders = grid.items(0, doc.cats);
