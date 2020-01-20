@@ -8,7 +8,7 @@ import {
   Grid,
   gridStyleO,
   gridItemsO,
-} from './view.js';
+} from './grid.js';
 
 console.log(gridStyleO);
 

@@ -1,6 +1,6 @@
 import chai from 'chai';
 import DecisionMatrixO from '../src/core.js';
-import { Grid, gridStyleO, gridItemsO } from '../src/view.js';
+import { Grid, gridStyleO, gridItemsO } from '../src/grid.js';
 
 const { expect } = chai;
 
