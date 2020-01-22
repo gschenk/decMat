@@ -2,8 +2,9 @@ import http from 'http';
 import data from './data.js';
 import DecisionMatrixO from './core.js';
 import Grid from './grid.js';
+import args from './args.js'
 
-const foobar = data.checkArgv();
+const foobar = args.check();
 
 // define yaml input file
 const inFilePath = (o = foobar) => {
