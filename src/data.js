@@ -40,7 +40,7 @@ The example will be shown as output.`);
 }
 
 // const data = fs.readFileSync(0, "utf-8");
-function readYmlData(inFilePath) {
+function readYaml(inFilePath) {
   // mutable binding to get variable before try scope
   let YmlDoc = {};
   // safeLoad from js-yaml loads one document per yaml file
@@ -52,7 +52,7 @@ function readYmlData(inFilePath) {
   return YmlDoc;
 }
 
-export {
+export default {
   checkArgv,
-  readYmlData,
+  readYaml,
 };
