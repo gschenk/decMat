@@ -1,6 +1,7 @@
 import chai from 'chai';
 import DecisionMatrixO from '../src/core.js';
 import Grid from '../src/grid.js';
+import tools from '../src/tools.js';
 
 const { expect } = chai;
 
@@ -47,3 +48,32 @@ describe('View, Grid methods', () => {
     expect(a).to.equal(b);
   });
 });
+
+describe('tools', () => {
+  const testCases = {
+    foo: 'rfoo',
+    bar: 'rbar',
+    tar: 'rtar',
+  };
+  it('zipWith', () => {
+    const as = [2, 4, 6];
+    const bs = [2, 2, 3];
+    const cs = tools.zipWith((a, b) => a - b)(as)(bs);
+    const rs = [0, 2, 3];
+    expect(cs.join('')).to.equal(rs.join(''));
+ 
+  });
+  it('pureSwitch', () => {
+    const fun = tools.pureSwitch (testCases) ('err');
+    const as = ['foo', 'tar', 'x', ''];
+    const bs = ['rfoo', 'rtar', 'err', 'err'];
+    expect(tools.zipWith((a, b) => a === b)(as.map(fun))(bs).every((a) => a)).to.equal(true);
+  });
+  it('matchSwitch includes', () => {
+    const fun = tools.matchSwitch (testCases) ('err') ((a) => (b) => b.includes(a));
+    const as = ['oo', 'ar', 'x', ''];
+    const bs = ['rfoo', 'err', 'err', 'err'];
+    expect(tools.zipWith((a, b) => a === b)(as.map(fun))(bs).every((a) => a)).to.equal(true);
+  });
+});
+
