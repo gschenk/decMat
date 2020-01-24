@@ -1,25 +1,35 @@
 const http = require('http');
-
-const {
-  checkArgv,
-  readYmlData,
-} = require('./data.js');
+const data = require('./data.js');
 
 const DecisionMatrixO = require('./core.js');
 const Grid = require('./grid.js');
 
-const foobar = checkArgv();
+const args = require('./args.js') 
+const tools = require('./tools.js') 
+
+const config = args.check(process.argv);
+
+if (config.err !== 0) {
+  const errCodes = {
+    7: 'E2BIG too many arguments',
+    22: 'EINVAL unknown argument',
+  };
+  console.error(
+    tools.pureSwitch(errCodes)(`unknown error ${config.err}`)(`${config.err}`),
+  );
+  process.exit(config.err);
+}
 
 // define yaml input file
-const inFilePath = (o = foobar) => {
+const inFilePath = (o = config) => {
   if (o.stdin) return 0;
   if (o.file) return o.file;
   return './example.yaml';
 };
-console.log(`Input file: ${foobar.stdin ? 'STDIN' : inFilePath()}`);
+console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath()}`);
 
 // create object with data from yaml input and methods
-const doc = new DecisionMatrixO(readYmlData(inFilePath()));
+const doc = new DecisionMatrixO(data.readYaml(inFilePath()));
 
 console.log(doc);
 
@@ -27,11 +37,13 @@ console.log(doc);
 const grid = new Grid(doc.dimN);
 
 // put content strings together
-const contentHeaders = grid.items(0, doc.cats);
-const contentColumns = doc.zeroToN.flatMap((i) => grid.items(i + 1, doc.valsByColumn(i))).join('');
-const content = `${contentHeaders}\n${contentColumns}`;
+const content = () => {
+  const headers = grid.items(0, doc.cats);
+  const cols = grid.assemble(doc.valsByColumn, grid.items);
+  return `${headers}\n${cols}`;
+};
 
-const outputString = `${grid.style}\n${grid.container(content)}`;
+const outputString = `${grid.style}\n${grid.container(content())}`;
 
 // start server and output html
 
