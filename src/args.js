@@ -1,4 +1,5 @@
 import tools from './tools.js';
+
 const { zipWith, pureSwitch, matchSwitch } = tools;
 // check command line arguments
 // This function has SIDE EFFECTS (exit with error)!
@@ -36,7 +37,7 @@ function check(fullArgs) {
 
   const makeBadReturn = () => {
     const failedKeys = zipWith((a, b) => (!a ? b : ''))(validResults)(validKeys).filter((a) => a);
-    const defaultErr = { err: 1, stdin: false, file: '' }; // EPERM 
+    const defaultErr = { err: 1, stdin: false, file: '' }; // EPERM
     const errCases = {
       notTooMany: { err: 7, stdin: false, file: '' }, // E2BIG
       knownArgs: { err: 22, stdin: false, file: '' }, // EINVAL

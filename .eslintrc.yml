@@ -14,5 +14,6 @@ parserOptions:
   sourceType: module
   ecmaVersion: 2018
 rules:
-  import/extensions: 1
+  import/extensions: 0
+  no-console: off
 

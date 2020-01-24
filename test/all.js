@@ -61,19 +61,17 @@ describe('tools', () => {
     const cs = tools.zipWith((a, b) => a - b)(as)(bs);
     const rs = [0, 2, 3];
     expect(cs.join('')).to.equal(rs.join(''));
- 
   });
   it('pureSwitch', () => {
-    const fun = tools.pureSwitch (testCases) ('err');
+    const fun = tools.pureSwitch(testCases)('err');
     const as = ['foo', 'tar', 'x', ''];
     const bs = ['rfoo', 'rtar', 'err', 'err'];
     expect(tools.zipWith((a, b) => a === b)(as.map(fun))(bs).every((a) => a)).to.equal(true);
   });
   it('matchSwitch includes', () => {
-    const fun = tools.matchSwitch (testCases) ('err') ((a) => (b) => b.includes(a));
+    const fun = tools.matchSwitch(testCases)('err')((a) => (b) => b.includes(a));
     const as = ['oo', 'ar', 'x', ''];
     const bs = ['rfoo', 'err', 'err', 'err'];
     expect(tools.zipWith((a, b) => a === b)(as.map(fun))(bs).every((a) => a)).to.equal(true);
   });
 });
-

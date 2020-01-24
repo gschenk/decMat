@@ -2,8 +2,8 @@ import http from 'http';
 import data from './data.js';
 import DecisionMatrixO from './core.js';
 import Grid from './grid.js';
-import args from './args.js'
-import tools from './tools.js'
+import args from './args.js';
+import tools from './tools.js';
 
 const config = args.check(process.argv);
 
@@ -29,7 +29,11 @@ console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath()}`);
 // create object with data from yaml input and methods
 const doc = new DecisionMatrixO(data.readYaml(inFilePath()));
 
-console.log(doc);
+console.log(
+  `${doc.dimM}x${doc.dimN} matrix with categories:`,
+  doc.cats,
+  `and values ${doc.zeroToN.map(doc.valsByColumn)}.\n`,
+);
 
 // create object with methods to format css grid
 const grid = new Grid(doc.dimN);
@@ -47,6 +51,7 @@ const outputString = `${grid.style}\n${grid.container(content())}`;
 
 // creating a server with one page
 function makeView(str) {
+  console.log('starting server');
   http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/html' });
     res.write(str);
