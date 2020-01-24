@@ -3,16 +3,28 @@ import data from './data.js';
 import DecisionMatrixO from './core.js';
 import Grid from './grid.js';
 import args from './args.js'
+import tools from './tools.js'
 
-const foobar = args.check();
+const config = args.check(process.argv);
+
+if (config.err !== 0) {
+  const errCodes = {
+    7: 'E2BIG too many arguments',
+    22: 'EINVAL unknown argument',
+  };
+  console.error(
+    tools.pureSwitch(errCodes)(`unknown error ${config.err}`)(`${config.err}`),
+  );
+  process.exit(config.err);
+}
 
 // define yaml input file
-const inFilePath = (o = foobar) => {
+const inFilePath = (o = config) => {
   if (o.stdin) return 0;
   if (o.file) return o.file;
   return './example.yaml';
 };
-console.log(`Input file: ${foobar.stdin ? 'STDIN' : inFilePath()}`);
+console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath()}`);
 
 // create object with data from yaml input and methods
 const doc = new DecisionMatrixO(data.readYaml(inFilePath()));

@@ -1,5 +1,5 @@
 import tools from './tools.js';
-const { funSwitch } = tools;
+const { zipWith, pureSwitch, matchSwitch } = tools;
 // check command line arguments
 // This function has SIDE EFFECTS (exit with error)!
 // returns an object with two keys, stdin and file
@@ -8,71 +8,59 @@ const { funSwitch } = tools;
 
 // dictionary of accepted argument patterns
 const knownArgs = {
-  stdin: (s) => s === '-',
-  inYaml: (s) => s.endsWith('.yaml'),
-  inYml: (s) => s.endsWith('.yml'),
+  '.yaml': 'file',
+  '.yml': 'file',
+  '-': 'stdin',
 };
 
-const valid = {
-  // tooLong :: Integer -> [String] -> Boolean
-  tooLong: (n) => (a) => a.length > n,
+const maxNArgs = 1;
 
-  // notKnown :: { (String -> Bool) } -> String -> Bool
-  notKnown: (o) => (s) => {
-    const fs = Object.keys(o).map((t) => o[t]);
-    return !fs.some((f) => f(s));
+const validTest = {
+  // notTooMany :: [String] -> Boolean
+  notTooMany: ((n = maxNArgs) => (as) => as.length <= n)(),
+
+  // knownArgs :: [String] -> Boolean
+  knownArgs: (as) => {
+    const fun = matchSwitch(knownArgs)(false)((a) => (b) => a.endsWith(b));
+    return as.map((a) => fun(a) !== false).every((a) => a);
   },
 };
 
-function newCheck() {
-  // const { argv } = process;
-
-  const args = process.argv.slice(2);
-  // const [head, second, ...args] = process.argv;
+function check(fullArgs) {
+  const args = fullArgs.slice(2);
   Object.freeze(args);
 
-  const error = funSwitch(args)([
-    { test: valid.tooLong(1), result: 'too many arguments' },
-    { test: (a) => a.some(valid.notKnown(knownArgs)), result: 'unknown cli argument' },
-  ]);
-  return error;
+  // apply all tests in validTest object on args
+  const validKeys = Object.keys(validTest);
+  const validResults = validKeys.map((a) => validTest[a](args));
 
-  // stdin: (s) => s === '-',
-  // inYaml: (s) => s.endsWith('.yaml'),
-}
-console.log(newCheck());
+  const makeBadReturn = () => {
+    const failedKeys = zipWith((a, b) => (!a ? b : ''))(validResults)(validKeys).filter((a) => a);
+    const defaultErr = { err: 1, stdin: false, file: '' }; // EPERM 
+    const errCases = {
+      notTooMany: { err: 7, stdin: false, file: '' }, // E2BIG
+      knownArgs: { err: 22, stdin: false, file: '' }, // EINVAL
+    };
 
-function check() {
-  const { argv } = process;
-  Object.freeze(argv);
+    // returns only the first failed error, TODO extend list
+    return pureSwitch(errCases)(defaultErr)(failedKeys[0]);
+  };
 
-  // usually the first and second element of argv contains the path to node's binary
-  // and the path to the source file. I do not take precautions for when it is not so.
+  const makeGoodReturn = (argument) => {
+    const defaultCase = { err: 0, stdin: false, file: '' };
+    const cases = {
+      stdin: { err: 0, stdin: true, file: '' },
+      file: { err: 0, stdin: false, file: argument },
+    };
+    const argMatch = matchSwitch(knownArgs)('')((a) => (b) => a.endsWith(b))(argument);
 
-  // if there are only two argv elements, its node bin and source file, do nothing
-  if (!valid.tooLong(2)(argv)) return { stdin: false, file: '' };
+    // only works with one argument
+    return pureSwitch(cases)(defaultCase)(argMatch);
+  };
 
-  // E2BIG Argument list too long
-  if (valid.tooLong(3)(argv)) {
-    console.error(`Argument list too long. ${argv[1]} accepts only one argument`);
-    process.exit(7);
-  }
-
-  // '-' toggles stdin
-  if (argv[2] === '-') return { stdin: true, file: '' };
-
-  //
-  if (argv[2].endsWith('.yaml')) return { stdin: false, file: argv[2] };
-
-  // EINVAL 22 Invalid argument
-  if (!valid.notKnown(knownArgs)(argv[2])) {
-    console.log(`The node script ${argv[1]} accepts a single command line argument.
-  It is either '-' for STDIN or the path to a *.yaml file. If no argument is provided
-  The example will be shown as output.`);
-    console.error('Cannot comprehend argument.')
-    process.exit(22);
-  }
-  return {};
+  return validResults.every((a) => a)
+    ? makeGoodReturn(args[0])
+    : makeBadReturn(args[0]);
 }
 
 export default { check };

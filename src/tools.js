@@ -18,20 +18,16 @@ const tools = {
 
     // matcher :: String a, Bool b =>  [a] -> ( a -> a -> b ) -> a -> [b]
     const matcher = (as) => (f) => (s) => as.map(f(s));
+    const match = matcher(keys)(fun)(str);
 
     // keyToMatch :: [String] -> [Bool] -> String;
     const keyToMatch = (as) => (bs) => zipWith((a, b) => (b ? a : ''))(as)(bs);
 
     // key :: String
-    const key = keyToMatch(keys)(matcher(keys)(fun)(str)).filter((c) => (c)).join('');
-    const uniqeMatch = matcher(keys)(fun)(str).filter((a) => (a)).length === 1;
+    const key = keyToMatch(keys)(match).filter((c) => (c)).join('');
+    const uniqeMatch = match.filter((a) => (a)).length === 1;
     return uniqeMatch ? cases[key] : defCase;
   },
-
-  // test if a test function returns True for a value and then return a result string
-  // takes an array of objects with 'test' and 'result' keys.
-  // funSwitch :: Bool b, String c => a -> [{ (a -> b), c }] -> [c]
-  funSwitch: (val) => (obs) => obs.map(({ test, result }) => (test(val) ? result : '')).filter((a) => (a)),
 
   zipWith,
 };
