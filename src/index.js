@@ -10,8 +10,8 @@ const defaultCfg = {
   err: 0,
   stdin: false,
   file: './example.yaml',
-  server: true,
-  verbose: true,
+  server: false,
+  verbose: false,
 };
 
 const config = args.check(process.argv, defaultCfg);
@@ -29,16 +29,18 @@ if (config.err !== 0) {
 
 // define yaml input file, STDIN has precedence over files
 const inFilePath = config.stdin ? 0 : config.file;
-console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath}`);
+if (config.verbose) console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath}`);
 
 // create object with data from yaml input and methods
 const doc = new DecisionMatrixO(data.readYaml(inFilePath));
 
-console.log(
-  `${doc.dimM}x${doc.dimN} matrix with categories:`,
-  doc.cats,
-  `and values ${doc.zeroToN.map(doc.valsByColumn)}.\n`,
-);
+if (config.verbose) {
+  console.log(
+    `${doc.dimM}x${doc.dimN} matrix with categories:`,
+    doc.cats,
+    `and values ${doc.zeroToN.map(doc.valsByColumn)}.\n`,
+  );
+}
 
 // create object with methods to format css grid
 const grid = new Grid(doc.dimN);
@@ -64,4 +66,10 @@ function makeView(str) {
   }).listen(8080);
 }
 
-if (config.server) makeView(outputString);
+if (config.server) {
+  makeView(outputString);
+} else {
+  if (config.verbose) console.log('Writing Decision Matrix as HTML to STDOUT:')
+  // write rudimentary html to STDOUT
+  console.log(outputString);
+}

@@ -13,7 +13,11 @@ const knownCliArguments = {
   '.yaml': 'file',
   '.yml': 'file',
   '-': 'stdin',
+  '--stdin': 'stdin',
   '-s': 'server',
+  '--server': 'server',
+  '-v': 'verbose',
+  '--verbose': 'verbose',
 };
 
 const validity = {
@@ -73,7 +77,6 @@ const makeGoodReturn = (knownArgs, cases) => (args) => {
 // consolidateReturn :: Object -> Object -> Object
 const consolidateReturn = (parts, defaults) => {
   const partsKeys = Object.keys(parts);
-  console.log(partsKeys);
   const defaultKeys = Object.keys(defaults);
   const keysIncluded = defaultKeys.map((a) => partsKeys.includes(a));
 
@@ -105,13 +108,13 @@ function check(fullArgs, defaultResults) {
     stdin: { stdin: true, file: '' },
     file: { file: arg },
     server: { server: true, verbose: true },
+    verbose: { verbose: true },
   });
   const goodReturn = makeGoodReturn(knownCliArguments, goodCases);
 
   const preResults = testsResults.every((a) => a)
     ? goodReturn(args)
     : badReturn(args);
-  console.log('preResults ', preResults);
 
   return consolidateReturn(preResults, defaultResults);
 }
