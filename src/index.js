@@ -9,7 +9,7 @@ import tools from './tools.js';
 const defaultCfg = {
   err: 0,
   stdin: false,
-  file: '',
+  file: './example.yaml',
 };
 
 const config = args.check(process.argv, defaultCfg);

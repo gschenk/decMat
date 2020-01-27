@@ -7,25 +7,57 @@ const { zipWith, pureSwitch, matchSwitch } = tools;
 
 // object with f to check validity of cli arguments
 
-const maxNArgs = 1;
 
 // dictionary of accepted argument patterns
-const knownArgs = {
+const knownCliArguments = {
   '.yaml': 'file',
   '.yml': 'file',
   '-': 'stdin',
 };
 
-const validTest = {
-  // notTooMany :: [String] -> Boolean
-  notTooMany: ((n = maxNArgs) => (as) => as.length <= n)(),
+const validity = {
+  tests: (maxArgs, knownArgsObject) => {
+    const bla = {
+      // notTooMany :: [String] -> Boolean
+      notTooMany: ((n) => (as) => as.length <= n)(maxArgs),
 
-  // knownArgs :: [String] -> Boolean
-  knownArgs: (as) => {
-    const fun = matchSwitch(knownArgs)(false)((a) => (b) => a.endsWith(b));
-    return as.map((a) => fun(a) !== false).every((a) => a);
+      // knownArguments :: [String] -> Boolean
+      knownArguments: ((o) => (as) => {
+        const fun = matchSwitch(o)(false)((a) => (b) => a.endsWith(b));
+        return as.map((a) => fun(a) !== false).every((a) => a);
+      })(knownArgsObject),
+    };
+    return bla;
+  },
+  errorCases: {
+    notTooMany: { err: 7 }, // E2BIG
+    knownArguments: { err: 22 }, // EINVAL
   },
 };
+
+
+// makeBadReturn :: [s] -> [a] -> { s: a }
+const makeBadReturn = (validKeys, validResults, errCases) => () => {
+  const failedKeys = zipWith((a, b) => (!a ? b : ''))(validResults)(validKeys).filter((a) => a);
+  const defaultErr = { err: 1 }; // EPERM
+
+  // returns only the first failed error, TODO extend list
+  return pureSwitch(errCases)(defaultErr)(failedKeys[0]);
+};
+
+
+// makeGoodReturn ::
+const makeGoodReturn = (knownArgs, cases) => (args) => {
+  const defaultCase = { };
+  const argMatch = args.map(
+    matchSwitch(knownArgs)('')((a) => (b) => a.endsWith(b)), // (argument);
+  );
+  const argMatch2 = argMatch[0] ? argMatch[0] : ''; // TODO placeholder til multiple args
+
+  // only works with one argument
+  return pureSwitch(cases(args[0]))(defaultCase)(argMatch2);
+};
+
 
 // Takes an object that contains some keys that are
 // a subset of the keys of the second argument.
@@ -46,42 +78,29 @@ const consolidateReturn = (parts, defaults) => {
   return tools.zipWith(zipper(parts, defaults))(defaultKeys)(keysIncluded).reduce(reducer);
 };
 
+
 // args.check :: String s => [s] -> { a }
 function check(fullArgs, defaultResults) {
   const args = fullArgs.slice(2);
   Object.freeze(args);
 
-  // apply all tests in validTest object on args
-  const validKeys = Object.keys(validTest);
-  const validResults = validKeys.map((a) => validTest[a](args));
+  // apply all tests in validityTests object on args
+  const tests = validity.tests(1, knownCliArguments);
+  const testsKeys = Object.keys(tests);
+  const testsResults = testsKeys.map((a) => tests[a](args));
 
-  const makeBadReturn = () => {
-    const failedKeys = zipWith((a, b) => (!a ? b : ''))(validResults)(validKeys).filter((a) => a);
-    const defaultErr = { err: 1 }; // EPERM
-    const errCases = {
-      notTooMany: { err: 7 }, // E2BIG
-      knownArgs: { err: 22 }, // EINVAL
-    };
+  const badReturn = makeBadReturn(testsKeys, testsResults, validity.errorCases);
 
-    // returns only the first failed error, TODO extend list
-    return pureSwitch(errCases)(defaultErr)(failedKeys[0]);
-  };
+  const goodCases = (arg) => ({
+    stdin: { stdin: true, file: '' },
+    file: { stdin: false, file: arg },
+  });
+  const goodReturn = makeGoodReturn(knownCliArguments, goodCases);
 
-  const makeGoodReturn = (argument) => {
-    const defaultCase = { err: 0 };
-    const cases = {
-      stdin: { stdin: true, file: '' },
-      file: { stdin: false, file: argument },
-    };
-    const argMatch = matchSwitch(knownArgs)('')((a) => (b) => a.endsWith(b))(argument);
-
-    // only works with one argument
-    return pureSwitch(cases)(defaultCase)(argMatch);
-  };
-
-  const preResults = validResults.every((a) => a)
-    ? makeGoodReturn(args[0])
-    : makeBadReturn(args[0]);
+  const preResults = testsResults.every((a) => a)
+    ? goodReturn(args)
+    : badReturn(args);
+  console.log('preResults ', preResults);
 
   return consolidateReturn(preResults, defaultResults);
 }
