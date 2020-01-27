@@ -5,7 +5,14 @@ import Grid from './grid.js';
 import args from './args.js';
 import tools from './tools.js';
 
-const config = args.check(process.argv);
+
+const defaultCfg = {
+  err: 0,
+  stdin: false,
+  file: '',
+};
+
+const config = args.check(process.argv, defaultCfg);
 
 if (config.err !== 0) {
   const errCodes = {

@@ -7,14 +7,14 @@ const { zipWith, pureSwitch, matchSwitch } = tools;
 
 // object with f to check validity of cli arguments
 
+const maxNArgs = 1;
+
 // dictionary of accepted argument patterns
 const knownArgs = {
   '.yaml': 'file',
   '.yml': 'file',
   '-': 'stdin',
 };
-
-const maxNArgs = 1;
 
 const validTest = {
   // notTooMany :: [String] -> Boolean
@@ -27,7 +27,27 @@ const validTest = {
   },
 };
 
-function check(fullArgs) {
+// Takes an object that contains some keys that are
+// a subset of the keys of the second argument.
+// Returns an object with all keys in the first object
+// with values from the first overriding the second
+// consolidateReturn :: Object -> Object -> Object
+const consolidateReturn = (parts, defaults) => {
+  const partsKeys = Object.keys(parts);
+  const defaultKeys = Object.keys(defaults);
+  const keysIncluded = defaultKeys.map((a) => partsKeys.includes(a));
+
+  // reducer :: { a } -> { b } -> { a, b }
+  const reducer = (o, a) => ({ ...o, ...a });
+
+  // zipper :: String s, Bool b => { s: a } -> { s: a } -> s -> b -> a
+  const zipper = (oTrue, oFalse) => (a, b) => (b ? { [a]: oTrue[a] } : { [a]: oFalse[a] });
+
+  return tools.zipWith(zipper(parts, defaults))(defaultKeys)(keysIncluded).reduce(reducer);
+};
+
+// args.check :: String s => [s] -> { a }
+function check(fullArgs, defaultResults) {
   const args = fullArgs.slice(2);
   Object.freeze(args);
 
@@ -37,10 +57,10 @@ function check(fullArgs) {
 
   const makeBadReturn = () => {
     const failedKeys = zipWith((a, b) => (!a ? b : ''))(validResults)(validKeys).filter((a) => a);
-    const defaultErr = { err: 1, stdin: false, file: '' }; // EPERM
+    const defaultErr = { err: 1 }; // EPERM
     const errCases = {
-      notTooMany: { err: 7, stdin: false, file: '' }, // E2BIG
-      knownArgs: { err: 22, stdin: false, file: '' }, // EINVAL
+      notTooMany: { err: 7 }, // E2BIG
+      knownArgs: { err: 22 }, // EINVAL
     };
 
     // returns only the first failed error, TODO extend list
@@ -48,10 +68,10 @@ function check(fullArgs) {
   };
 
   const makeGoodReturn = (argument) => {
-    const defaultCase = { err: 0, stdin: false, file: '' };
+    const defaultCase = { err: 0 };
     const cases = {
-      stdin: { err: 0, stdin: true, file: '' },
-      file: { err: 0, stdin: false, file: argument },
+      stdin: { stdin: true, file: '' },
+      file: { stdin: false, file: argument },
     };
     const argMatch = matchSwitch(knownArgs)('')((a) => (b) => a.endsWith(b))(argument);
 
@@ -59,9 +79,11 @@ function check(fullArgs) {
     return pureSwitch(cases)(defaultCase)(argMatch);
   };
 
-  return validResults.every((a) => a)
+  const preResults = validResults.every((a) => a)
     ? makeGoodReturn(args[0])
     : makeBadReturn(args[0]);
+
+  return consolidateReturn(preResults, defaultResults);
 }
 
 export default { check };
