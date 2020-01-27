@@ -10,6 +10,8 @@ const defaultCfg = {
   err: 0,
   stdin: false,
   file: './example.yaml',
+  server: true,
+  verbose: true,
 };
 
 const config = args.check(process.argv, defaultCfg);
@@ -25,16 +27,12 @@ if (config.err !== 0) {
   process.exit(config.err);
 }
 
-// define yaml input file
-const inFilePath = (o = config) => {
-  if (o.stdin) return 0;
-  if (o.file) return o.file;
-  return './example.yaml';
-};
-console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath()}`);
+// define yaml input file, STDIN has precedence over files
+const inFilePath = config.stdin ? 0 : config.file;
+console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath}`);
 
 // create object with data from yaml input and methods
-const doc = new DecisionMatrixO(data.readYaml(inFilePath()));
+const doc = new DecisionMatrixO(data.readYaml(inFilePath));
 
 console.log(
   `${doc.dimM}x${doc.dimN} matrix with categories:`,
@@ -66,4 +64,4 @@ function makeView(str) {
   }).listen(8080);
 }
 
-makeView(outputString);
+if (config.server) makeView(outputString);

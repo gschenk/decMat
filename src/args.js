@@ -13,6 +13,7 @@ const knownCliArguments = {
   '.yaml': 'file',
   '.yml': 'file',
   '-': 'stdin',
+  '-s': 'server',
 };
 
 const validity = {
@@ -36,26 +37,32 @@ const validity = {
 };
 
 
-// makeBadReturn :: [s] -> [a] -> { s: a }
-const makeBadReturn = (validKeys, validResults, errCases) => () => {
-  const failedKeys = zipWith((a, b) => (!a ? b : ''))(validResults)(validKeys).filter((a) => a);
-  const defaultErr = { err: 1 }; // EPERM
+// makeBadReturn :: [s] -> [a] -> { s: a } -> { s: a }
+const makeBadReturn = (errKeys, errResults, errCases) => () => {
+  const defaultErr = { err: 22 }; // EINVAL
+  const failedKeys = zipWith((a, b) => (!a ? b : ''))(errResults)(errKeys);
+  const filterdFailedKeys = failedKeys.filter((a) => a);
 
-  // returns only the first failed error, TODO extend list
-  return pureSwitch(errCases)(defaultErr)(failedKeys[0]);
+  return filterdFailedKeys.length === 1
+    ? pureSwitch(errCases)(defaultErr)(filterdFailedKeys[0])
+    : defaultErr;
 };
 
 
 // makeGoodReturn ::
+// String s => { s, s } -> { s, a } -> (s -> { s, { s, a } }) -> s -> { s, a }
 const makeGoodReturn = (knownArgs, cases) => (args) => {
   const defaultCase = { };
-  const argMatch = args.map(
-    matchSwitch(knownArgs)('')((a) => (b) => a.endsWith(b)), // (argument);
-  );
-  const argMatch2 = argMatch[0] ? argMatch[0] : ''; // TODO placeholder til multiple args
 
-  // only works with one argument
-  return pureSwitch(cases(args[0]))(defaultCase)(argMatch2);
+  const matcher = (arg) => {
+    const argMatch = matchSwitch(knownArgs)('')((a) => (b) => a.endsWith(b))(arg);
+    return pureSwitch(cases(arg))(defaultCase)(argMatch);
+  };
+
+  const returnCasesArray = args.map(matcher);
+  return returnCasesArray.length > 0
+    ? returnCasesArray.reduce((o, a) => ({ ...o, ...a }))
+    : defaultCase;
 };
 
 
@@ -66,6 +73,7 @@ const makeGoodReturn = (knownArgs, cases) => (args) => {
 // consolidateReturn :: Object -> Object -> Object
 const consolidateReturn = (parts, defaults) => {
   const partsKeys = Object.keys(parts);
+  console.log(partsKeys);
   const defaultKeys = Object.keys(defaults);
   const keysIncluded = defaultKeys.map((a) => partsKeys.includes(a));
 
@@ -73,7 +81,9 @@ const consolidateReturn = (parts, defaults) => {
   const reducer = (o, a) => ({ ...o, ...a });
 
   // zipper :: String s, Bool b => { s: a } -> { s: a } -> s -> b -> a
-  const zipper = (oTrue, oFalse) => (a, b) => (b ? { [a]: oTrue[a] } : { [a]: oFalse[a] });
+  const zipper = (oTrue, oFalse) => (a, b) => (b
+    ? { [a]: oTrue[a] }
+    : { [a]: oFalse[a] });
 
   return tools.zipWith(zipper(parts, defaults))(defaultKeys)(keysIncluded).reduce(reducer);
 };
@@ -85,7 +95,7 @@ function check(fullArgs, defaultResults) {
   Object.freeze(args);
 
   // apply all tests in validityTests object on args
-  const tests = validity.tests(1, knownCliArguments);
+  const tests = validity.tests(2, knownCliArguments);
   const testsKeys = Object.keys(tests);
   const testsResults = testsKeys.map((a) => tests[a](args));
 
@@ -93,7 +103,8 @@ function check(fullArgs, defaultResults) {
 
   const goodCases = (arg) => ({
     stdin: { stdin: true, file: '' },
-    file: { stdin: false, file: arg },
+    file: { file: arg },
+    server: { server: true, verbose: true },
   });
   const goodReturn = makeGoodReturn(knownCliArguments, goodCases);
 
