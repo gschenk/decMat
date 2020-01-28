@@ -2,11 +2,11 @@ import http from 'http';
 import data from './data.js';
 import DecisionMatrixO from './core.js';
 import Grid from './grid.js';
-import args from './args.js';
+import Config from './config.js';
 import tools from './tools.js';
 import defaults from './defaults.js';
 
-const config = args.getConfig(
+const config = Config.getConfig(
   process.argv,
   defaults.defaultCfg,
   defaults.knownCliArguments,
