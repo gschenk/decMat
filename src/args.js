@@ -7,61 +7,98 @@ const { zipWith, pureSwitch, matchSwitch } = tools;
 
 // object with f to check validity of cli arguments
 
-// dictionary of accepted argument patterns
-const knownArgs = {
-  '.yaml': 'file',
-  '.yml': 'file',
-  '-': 'stdin',
-};
 
-const maxNArgs = 1;
+const validity = {
+  tests: (maxArgs, knownArgsObject) => {
+    const bla = {
+      // notTooMany :: [String] -> Boolean
+      notTooMany: ((n) => (as) => as.length <= n)(maxArgs),
 
-const validTest = {
-  // notTooMany :: [String] -> Boolean
-  notTooMany: ((n = maxNArgs) => (as) => as.length <= n)(),
-
-  // knownArgs :: [String] -> Boolean
-  knownArgs: (as) => {
-    const fun = matchSwitch(knownArgs)(false)((a) => (b) => a.endsWith(b));
-    return as.map((a) => fun(a) !== false).every((a) => a);
+      // knownArguments :: [String] -> Boolean
+      knownArguments: ((o) => (as) => {
+        const fun = matchSwitch(o)(false)((a) => (b) => a.endsWith(b));
+        return as.map((a) => fun(a) !== false).every((a) => a);
+      })(knownArgsObject),
+    };
+    return bla;
+  },
+  errorCases: {
+    notTooMany: { err: 7 }, // E2BIG
+    knownArguments: { err: 22 }, // EINVAL
   },
 };
 
-function check(fullArgs) {
+
+// makeBadReturn :: [s] -> [a] -> { s: a } -> { s: a }
+const makeBadReturn = (errKeys, errResults, errCases) => () => {
+  const defaultErr = { err: 22 }; // EINVAL
+  const failedKeys = zipWith((a, b) => (!a ? b : ''))(errResults)(errKeys);
+  const filterdFailedKeys = failedKeys.filter((a) => a);
+
+  return filterdFailedKeys.length === 1
+    ? pureSwitch(errCases)(defaultErr)(filterdFailedKeys[0])
+    : defaultErr;
+};
+
+
+// makeGoodReturn ::
+// String s => { s, s } -> { s, a } -> (s -> { s, { s, a } }) -> s -> { s, a }
+const makeGoodReturn = (knownArgs, cases) => (args) => {
+  const defaultCase = { };
+
+  const matcher = (arg) => {
+    const argMatch = matchSwitch(knownArgs)('')((a) => (b) => a.endsWith(b))(arg);
+    return pureSwitch(cases(arg))(defaultCase)(argMatch);
+  };
+
+  const returnCasesArray = args.map(matcher);
+  return returnCasesArray.length > 0
+    ? returnCasesArray.reduce((o, a) => ({ ...o, ...a }))
+    : defaultCase;
+};
+
+
+// Takes an object that contains some keys that are
+// a subset of the keys of the second argument.
+// Returns an object with all keys in the first object
+// with values from the first overriding the second
+// consolidateReturn :: Object -> Object -> Object
+const consolidateReturn = (parts, defaults) => {
+  const partsKeys = Object.keys(parts);
+  const defaultKeys = Object.keys(defaults);
+  const keysIncluded = defaultKeys.map((a) => partsKeys.includes(a));
+
+  // reducer :: { a } -> { b } -> { a, b }
+  const reducer = (o, a) => ({ ...o, ...a });
+
+  // zipper :: String s, Bool b => { s: a } -> { s: a } -> s -> b -> a
+  const zipper = (oTrue, oFalse) => (a, b) => (b
+    ? { [a]: oTrue[a] }
+    : { [a]: oFalse[a] });
+
+  return tools.zipWith(zipper(parts, defaults))(defaultKeys)(keysIncluded).reduce(reducer);
+};
+
+
+// args.getConfig :: String s => [s] -> { s: a } -> { s: s } -> { s: a } -> { s: a }
+function getConfig(fullArgs, defaultResults, knownCliArguments, goodCases) {
   const args = fullArgs.slice(2);
   Object.freeze(args);
 
-  // apply all tests in validTest object on args
-  const validKeys = Object.keys(validTest);
-  const validResults = validKeys.map((a) => validTest[a](args));
+  // apply all tests in validityTests object on args
+  const tests = validity.tests(2, knownCliArguments);
+  const testsKeys = Object.keys(tests);
+  const testsResults = testsKeys.map((a) => tests[a](args));
 
-  const makeBadReturn = () => {
-    const failedKeys = zipWith((a, b) => (!a ? b : ''))(validResults)(validKeys).filter((a) => a);
-    const defaultErr = { err: 1, stdin: false, file: '' }; // EPERM 
-    const errCases = {
-      notTooMany: { err: 7, stdin: false, file: '' }, // E2BIG
-      knownArgs: { err: 22, stdin: false, file: '' }, // EINVAL
-    };
+  const badReturn = makeBadReturn(testsKeys, testsResults, validity.errorCases);
 
-    // returns only the first failed error, TODO extend list
-    return pureSwitch(errCases)(defaultErr)(failedKeys[0]);
-  };
+  const goodReturn = makeGoodReturn(knownCliArguments, goodCases);
 
-  const makeGoodReturn = (argument) => {
-    const defaultCase = { err: 0, stdin: false, file: '' };
-    const cases = {
-      stdin: { err: 0, stdin: true, file: '' },
-      file: { err: 0, stdin: false, file: argument },
-    };
-    const argMatch = matchSwitch(knownArgs)('')((a) => (b) => a.endsWith(b))(argument);
+  const preResults = testsResults.every((a) => a)
+    ? goodReturn(args)
+    : badReturn(args);
 
-    // only works with one argument
-    return pureSwitch(cases)(defaultCase)(argMatch);
-  };
-
-  return validResults.every((a) => a)
-    ? makeGoodReturn(args[0])
-    : makeBadReturn(args[0]);
+  return consolidateReturn(preResults, defaultResults);
 }
 
-module.exports = { check };
+module.exports = { getConfig };

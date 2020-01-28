@@ -4,10 +4,18 @@ const data = require('./data.js');
 const DecisionMatrixO = require('./core.js');
 const Grid = require('./grid.js');
 
-const args = require('./args.js') 
-const tools = require('./tools.js') 
+const args = require('./args.js');
+const tools = require('./tools.js');
+const defaults = require('./defaults.js');
 
-const config = args.check(process.argv);
+const config = args.getConfig(
+  process.argv,
+  defaults.defaultCfg,
+  defaults.knownCliArguments,
+  defaults.configForArg,
+);
+Object.freeze(config);
+
 
 if (config.err !== 0) {
   const errCodes = {
@@ -20,18 +28,20 @@ if (config.err !== 0) {
   process.exit(config.err);
 }
 
-// define yaml input file
-const inFilePath = (o = config) => {
-  if (o.stdin) return 0;
-  if (o.file) return o.file;
-  return './example.yaml';
-};
-console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath()}`);
+// define yaml input file, STDIN has precedence over files
+const inFilePath = config.stdin ? 0 : config.file;
+if (config.verbose) console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath}`);
 
 // create object with data from yaml input and methods
-const doc = new DecisionMatrixO(data.readYaml(inFilePath()));
+const doc = new DecisionMatrixO(data.readYaml(inFilePath));
 
-console.log(doc);
+if (config.verbose) {
+  console.log(
+    `${doc.dimM}x${doc.dimN} matrix with categories:`,
+    doc.cats,
+    `and values ${doc.zeroToN.map(doc.valsByColumn)}.\n`,
+  );
+}
 
 // create object with methods to format css grid
 const grid = new Grid(doc.dimN);
@@ -49,6 +59,7 @@ const outputString = `${grid.style}\n${grid.container(content())}`;
 
 // creating a server with one page
 function makeView(str) {
+  console.log('starting server');
   http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/html' });
     res.write(str);
@@ -56,4 +67,10 @@ function makeView(str) {
   }).listen(8080);
 }
 
-makeView(outputString);
+if (config.server) {
+  makeView(outputString);
+} else {
+  if (config.verbose) console.log('Writing Decision Matrix as HTML to STDOUT:');
+  // write rudimentary html to STDOUT
+  console.log(outputString);
+}
