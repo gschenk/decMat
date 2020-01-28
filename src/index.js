@@ -4,11 +4,11 @@ const data = require('./data.js');
 const DecisionMatrixO = require('./core.js');
 const Grid = require('./grid.js');
 
-const args = require('./args.js');
+const Config = require('./config.js');
 const tools = require('./tools.js');
 const defaults = require('./defaults.js');
 
-const config = args.getConfig(
+const config = new Config(
   process.argv,
   defaults.defaultCfg,
   defaults.knownCliArguments,
@@ -26,6 +26,13 @@ if (config.err !== 0) {
     tools.pureSwitch(errCodes)(`unknown error ${config.err}`)(`${config.err}`),
   );
   process.exit(config.err);
+}
+
+if (config.help) {
+  console.log('This programme accepts up to two comand line arguments from the following set:');
+  console.log(defaults.knownCliArguments);
+  process.exit(0);
+  console.log('where .yaml and .yml denote any input file, including path, with that end.');
 }
 
 // define yaml input file, STDIN has precedence over files

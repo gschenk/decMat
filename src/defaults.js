@@ -6,6 +6,7 @@ const defaultCfg = {
   file: './example.yaml',
   server: false,
   verbose: false,
+  help: false,
 };
 
 // argument flags are mapped to these
@@ -15,6 +16,7 @@ const configForArg = (arg) => ({
   file: { file: arg },
   server: { server: true, verbose: true },
   verbose: { verbose: true },
+  help: { help: true },
 });
 
 // dictionary of accepted argument patterns
@@ -27,6 +29,9 @@ const knownCliArguments = {
   '--server': 'server',
   '-v': 'verbose',
   '--verbose': 'verbose',
+  '-h': 'help',
+  '--help': 'help',
+  '-?': 'help',
 };
 
 module.exports = {
