@@ -1,40 +1,70 @@
 import http from 'http';
-import {
-  checkArgv,
-  readYmlData,
-} from './data.js';
+import data from './data.js';
 import DecisionMatrixO from './core.js';
 import Grid from './grid.js';
+import Config from './config.js';
+import tools from './tools.js';
+import defaults from './defaults.js';
 
-const foobar = checkArgv();
+const config = new Config(
+  process.argv,
+  defaults.defaultCfg,
+  defaults.knownCliArguments,
+  defaults.configForArg,
+);
+Object.freeze(config);
 
-// define yaml input file
-const inFilePath = (o = foobar) => {
-  if (o.stdin) return 0;
-  if (o.file) return o.file;
-  return './example.yaml';
-};
-console.log(`Input file: ${foobar.stdin ? 'STDIN' : inFilePath()}`);
+
+if (config.err !== 0) {
+  const errCodes = {
+    7: 'E2BIG too many arguments',
+    22: 'EINVAL unknown argument',
+  };
+  console.error(
+    tools.pureSwitch(errCodes)(`unknown error ${config.err}`)(`${config.err}`),
+  );
+  process.exit(config.err);
+}
+
+if (config.help) {
+  console.log('This programme accepts up to two comand line arguments from the following set:');
+  console.log(defaults.knownCliArguments);
+  process.exit(0);
+  console.log('where .yaml and .yml denote any input file, including path, with that end.');
+}
+
+// define yaml input file, STDIN has precedence over files
+const inFilePath = config.stdin ? 0 : config.file;
+if (config.verbose) console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath}`);
 
 // create object with data from yaml input and methods
-const doc = new DecisionMatrixO(readYmlData(inFilePath()));
+const doc = new DecisionMatrixO(data.readYaml(inFilePath));
 
-console.log(doc);
+if (config.verbose) {
+  console.log(
+    `${doc.dimM}x${doc.dimN} matrix with categories:`,
+    doc.cats,
+    `and values ${doc.zeroToN.map(doc.valsByColumn)}.\n`,
+  );
+}
 
 // create object with methods to format css grid
 const grid = new Grid(doc.dimN);
 
 // put content strings together
-const contentHeaders = grid.items(0, doc.cats);
-const contentColumns = doc.zeroToN.flatMap((i) => grid.items(i + 1, doc.valsByColumn(i))).join('');
-const content = `${contentHeaders}\n${contentColumns}`;
+const content = () => {
+  const headers = grid.items(0, doc.cats);
+  const cols = grid.assemble(doc.valsByColumn, grid.items);
+  return `${headers}\n${cols}`;
+};
 
-const outputString = `${grid.style}\n${grid.container(content)}`;
+const outputString = `${grid.style}\n${grid.container(content())}`;
 
 // start server and output html
 
 // creating a server with one page
 function makeView(str) {
+  console.log('starting server');
   http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/html' });
     res.write(str);
@@ -42,4 +72,10 @@ function makeView(str) {
   }).listen(8080);
 }
 
-makeView(outputString);
+if (config.server) {
+  makeView(outputString);
+} else {
+  if (config.verbose) console.log('Writing Decision Matrix as HTML to STDOUT:');
+  // write rudimentary html to STDOUT
+  console.log(outputString);
+}
