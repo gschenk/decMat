@@ -1,12 +1,12 @@
 const http = require('http');
-const data = require('./data.js');
+const data = require('./data');
 
-const DecisionMatrixO = require('./core.js');
-const Grid = require('./grid.js');
+const DecisionMatrixO = require('./core');
+const Grid = require('./grid');
 
-const Config = require('./config.js');
-const tools = require('./tools.js');
-const defaults = require('./defaults.js');
+const Config = require('./config');
+const tools = require('./tools');
+const defaults = require('./defaults');
 
 const config = new Config(
   process.argv,

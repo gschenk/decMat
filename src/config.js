@@ -1,4 +1,4 @@
-const tools = require('./tools.js');
+const tools = require('./tools');
 
 const { zipWith, pureSwitch, matchSwitch } = tools;
 // check command line arguments
