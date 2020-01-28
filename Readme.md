@@ -33,14 +33,18 @@ be spelled out in source.
 This may be in conflict with best practices, for instance, the
 AirBnB style guide.
 
-An argument containing path and name of an input file xor the 
-'-' sign to read from STDIN are supported.
+By default the html code to display the decision matrix is
+written to stdout. Use the `--server` comand line argument to
+see a preview with nodes webserver at localhost on port 8080.
+
 
 From the project directory run as
 `> node ./src/index.js [myfile.yaml]`
 or with the '-' argument to read from STDIN
 `node ./src/index.js - `
 without any arguments the default example.yaml will be shown.
+
+The cli argument `--help` lists all available arguments.
 
 
 ## Testing
