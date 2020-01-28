@@ -6,7 +6,7 @@ import Config from './config.js';
 import tools from './tools.js';
 import defaults from './defaults.js';
 
-const config = Config.getConfig(
+const config = new Config(
   process.argv,
   defaults.defaultCfg,
   defaults.knownCliArguments,
