@@ -8,18 +8,6 @@ const { zipWith, pureSwitch, matchSwitch } = tools;
 // object with f to check validity of cli arguments
 
 
-// dictionary of accepted argument patterns
-const knownCliArguments = {
-  '.yaml': 'file',
-  '.yml': 'file',
-  '-': 'stdin',
-  '--stdin': 'stdin',
-  '-s': 'server',
-  '--server': 'server',
-  '-v': 'verbose',
-  '--verbose': 'verbose',
-};
-
 const validity = {
   tests: (maxArgs, knownArgsObject) => {
     const bla = {
@@ -92,8 +80,8 @@ const consolidateReturn = (parts, defaults) => {
 };
 
 
-// args.check :: String s => [s] -> { a }
-function check(fullArgs, defaultResults) {
+// args.getConfig :: String s => [s] -> { s: a } -> { s: s } -> { s: a } -> { s: a }
+function getConfig(fullArgs, defaultResults, knownCliArguments, goodCases) {
   const args = fullArgs.slice(2);
   Object.freeze(args);
 
@@ -104,12 +92,6 @@ function check(fullArgs, defaultResults) {
 
   const badReturn = makeBadReturn(testsKeys, testsResults, validity.errorCases);
 
-  const goodCases = (arg) => ({
-    stdin: { stdin: true, file: '' },
-    file: { file: arg },
-    server: { server: true, verbose: true },
-    verbose: { verbose: true },
-  });
   const goodReturn = makeGoodReturn(knownCliArguments, goodCases);
 
   const preResults = testsResults.every((a) => a)
@@ -119,4 +101,4 @@ function check(fullArgs, defaultResults) {
   return consolidateReturn(preResults, defaultResults);
 }
 
-export default { check };
+export default { getConfig };

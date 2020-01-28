@@ -4,17 +4,16 @@ import DecisionMatrixO from './core.js';
 import Grid from './grid.js';
 import args from './args.js';
 import tools from './tools.js';
+import defaults from './defaults.js';
 
+const config = args.getConfig(
+  process.argv,
+  defaults.defaultCfg,
+  defaults.knownCliArguments,
+  defaults.configForArg,
+);
+Object.freeze(config);
 
-const defaultCfg = {
-  err: 0,
-  stdin: false,
-  file: './example.yaml',
-  server: false,
-  verbose: false,
-};
-
-const config = args.check(process.argv, defaultCfg);
 
 if (config.err !== 0) {
   const errCodes = {
@@ -69,7 +68,7 @@ function makeView(str) {
 if (config.server) {
   makeView(outputString);
 } else {
-  if (config.verbose) console.log('Writing Decision Matrix as HTML to STDOUT:')
+  if (config.verbose) console.log('Writing Decision Matrix as HTML to STDOUT:');
   // write rudimentary html to STDOUT
   console.log(outputString);
 }
