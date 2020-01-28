@@ -26,6 +26,13 @@ if (config.err !== 0) {
   process.exit(config.err);
 }
 
+if (config.help) {
+  console.log('This programme accepts up to two comand line arguments from the following set:');
+  console.log(defaults.knownCliArguments);
+  process.exit(0);
+  console.log('where .yaml and .yml denote any input file, including path, with that end.');
+}
+
 // define yaml input file, STDIN has precedence over files
 const inFilePath = config.stdin ? 0 : config.file;
 if (config.verbose) console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath}`);
