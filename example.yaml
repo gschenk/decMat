@@ -2,17 +2,17 @@
 # List items are ordered from most liked to least liked.
 # Categories are ordered from most important to least important.
 task:
-- build new moon lander
-- do something moderately interesting
-- fill forms
+    1: build new moon lander
+    2: do something moderately interesting
+    3: fill forms
 
 tool:
-- linux
-- mac
-- pointy rocks
-- windows
+    1: linux
+    2: mac
+    3: pointy rocks
+    4: windows
 
 money:
-- enough
-- little
-- nomoney
+    1: enough
+    2: little
+    3: nomoney

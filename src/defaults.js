@@ -7,6 +7,7 @@ const defaultCfg = {
   server: false,
   verbose: false,
   help: false,
+  ycategories: false,
 };
 
 // argument flags are mapped to these
@@ -17,6 +18,7 @@ const configForArg = (arg) => ({
   server: { server: true, verbose: true },
   verbose: { verbose: true },
   help: { help: true },
+  ycategories: { ycategories: true },
 });
 
 // dictionary of accepted argument patterns
@@ -32,6 +34,8 @@ const knownCliArguments = {
   '-h': 'help',
   '--help': 'help',
   '-?': 'help',
+  '-y': 'ycategories',
+  '--ycategories': 'ycategories',
 };
 
 export default {
