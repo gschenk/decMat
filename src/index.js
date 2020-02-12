@@ -5,6 +5,7 @@ import Grid from './grid.js';
 import Config from './config.js';
 import tools from './tools.js';
 import defaults from './defaults.js';
+import input from './input.js';
 
 const config = new Config(
   process.argv,
@@ -38,7 +39,7 @@ const inFilePath = config.stdin ? 0 : config.file;
 if (config.verbose) console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath}`);
 
 // create object with data from yaml input and methods
-const doc = new DecisionMatrixO(data.readYaml(inFilePath));
+const doc = new DecisionMatrixO(input.comprehend(data.readYaml(inFilePath)));
 
 if (config.verbose) {
   console.log(

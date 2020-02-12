@@ -6,9 +6,9 @@ import tools from '../src/tools.js';
 const { expect } = chai;
 
 const testMat = new DecisionMatrixO({
-  k0: ['a0', 'a1'],
-  k1: ['b0', 'b1'],
-  k2: ['c0', 'c1', 'c2'],
+  k0: [{ 0: 'a0' }, { 1: 'a1' }],
+  k1: [{ 1: 'b0' }, { 2: 'b1' }],
+  k2: [{ 0: 'c0' }, { 2: 'c1' }, { 3: 'c2' }],
   k3: [],
 });
 

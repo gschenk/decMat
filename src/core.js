@@ -18,7 +18,7 @@ function DecisionMatrixO(data) {
 
   // access values by number of n of category.
   // valsByColumn :: Object -> Integer -> [String]
-  const valsByColumn = (o) => (m) => o[cats[m]];
+  const valsByColumn = (o) => (m) => o[cats[m]].map((a) => Object.values(a));
 
   // properties and methods
   // this.cats :: [String]
