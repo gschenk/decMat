@@ -3,11 +3,11 @@
 // css styles
 const style = {
   // container holds all divs
-  // argument number of columns (m)
+  // argument number of columns (n)
   // container :: Integer => String
-  container: (m) => `.grid-container {
+  container: (n) => `.grid-container {
       display: grid;
-      grid-template-columns: ${'auto '.repeat(m)};
+      grid-template-columns: ${'auto '.repeat(n)};
       grid-auto-flow: row dense;
       background-color: #2196F3;
       padding: 10px;
@@ -22,9 +22,9 @@ const style = {
     }`,
   // css style for consecutive rows, restricting column to m
   // itemBody :: Integer -> String
-  itemBody: (m, n) => `.grid-item-${m}-${n || ''} {
-      grid-column: ${m};
-      grid-row: ${n ? n + 1 : 'auto'};
+  itemBody: (n, m) => `.grid-item-${m || ''}-${n || ''} {
+      grid-column: ${n};
+      grid-row: ${m ? m + 1 : 'auto'};
       background-color: rgba(255, 255, 255, 0.7);
       padding: 10px;
     }`,
@@ -34,7 +34,7 @@ Object.freeze(style);
 
 const divs = {
   // item :: String -> String
-  item: (m, n) => (s) => `<div class="grid-item-${m}-${n || ''}">${s}</div>`,
+  item: (n, m) => (s) => `<div class="grid-item-${m || ''}-${n || ''}">${s}</div>`,
   // container :: String -> String
   container: (s) => `<div class="grid-container">${s}</div>`,
 };
@@ -58,17 +58,17 @@ class Grid {
     this.container = (s) => divs.container(s);
 
     // this.items :: Integer -> Integer -> [String] -> String
-    this.items = (m, ns) => (a) => a.map((s, i) => divs.item(m, ns ? ns[i] : undefined)(s)).join('\n');
+    this.items = (n, ms) => (a) => a.map((s, i) => divs.item(n, ms ? ms[i] : undefined)(s)).join('\n');
 
     // this.itemStyle :: Integer -> Integer -> ( Integer -> Function )
-    const itemStyle = (m, n) => (m === 0 ? itemHead : itemBody(m, n));
+    const itemStyle = (n, m) => (n === 0 ? itemHead : itemBody(n, m));
 
     // Put elements of css grid style together, create itemStyle elements up
     // to dimN elements
     // assembleStyle :: Integer -> String
-    const assembleStyle = (i) => (ns) => `<style>
+    const assembleStyle = (i) => (ms) => `<style>
         ${container(dimN)}
-        ${zeroToI(i + 1).flatMap((m) => ns.map((n) => itemStyle(m, n))).join('\n')}
+        ${zeroToI(i + 1).flatMap((n) => ms.map((m) => itemStyle(n, m))).join('\n')}
       </style>`;
 
     // this.style :: String
