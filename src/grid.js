@@ -1,35 +1,5 @@
 // provides css strings and functions to build make an html page with grid
-
-// css styles
-const style = {
-  // container holds all divs
-  // argument number of columns (n)
-  // container :: Integer => String
-  container: (n) => `.grid-container {
-      display: grid;
-      grid-template-columns: ${'auto '.repeat(n)};
-      grid-auto-flow: row dense;
-      background-color: #2196F3;
-      padding: 10px;
-      grid-gap: 20px;
-    }`,
-  // css style for first row of grid
-  // itemHead :: String
-  itemHead: `.grid-item-0- {
-      background-color: rgba(255, 255, 255, 0.9);
-      grid-row: 1;
-      padding: 10px;
-    }`,
-  // css style for consecutive rows, restricting column to m
-  // itemBody :: Integer -> String
-  itemBody: (n, m) => `.grid-item-${m || ''}-${n || ''} {
-      grid-column: ${n};
-      grid-row: ${m ? m + 1 : 'auto'};
-      background-color: rgba(255, 255, 255, 0.7);
-      padding: 10px;
-    }`,
-};
-Object.freeze(style);
+import styles from './css.js';
 
 
 const divs = {
@@ -45,12 +15,12 @@ Object.freeze(divs);
 class Grid {
 // Grid :: Integer -> Object -> Object -> Object
   constructor(dimN) {
-    // strings and functions to set css style
+    // strings and functions to set css styles
     const {
       container,
       itemHead,
       itemBody,
-    } = style;
+    } = styles;
 
     const zeroToI = (i) => [...Array(i).keys()];
 
@@ -63,16 +33,16 @@ class Grid {
     // this.itemStyle :: Integer -> Integer -> ( Integer -> Function )
     const itemStyle = (n, m) => (n === 0 ? itemHead : itemBody(n, m));
 
-    // Put elements of css grid style together, create itemStyle elements up
+    // Put elements of css grid styles together, create itemStyle elements up
     // to dimN elements
     // assembleStyle :: Integer -> String
-    const assembleStyle = (i) => (ms) => `<style>
+    const assembleStyle = (i) => (ms) => `<styles>
         ${container(dimN)}
         ${zeroToI(i + 1).flatMap((n) => ms.map((m) => itemStyle(n, m))).join('\n')}
-      </style>`;
+      </styles>`;
 
-    // this.style :: String
-    this.style = assembleStyle(dimN);
+    // this.styles :: String
+    this.styles = assembleStyle(dimN);
 
     // assembleDivs :: Integer -> Function -> String
     const assembleDivs = (i) => (f, g) => zeroToI(i)
