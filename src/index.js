@@ -50,16 +50,13 @@ if (config.verbose) {
 }
 
 // create object with methods to format css grid
-const grid = new Grid(doc.dimN);
+const grid = new Grid(doc.dimN, doc.dimN, true);
 
 // put content strings together
-const content = () => {
-  const headers = grid.items(0)(doc.cats);
-  const cols = grid.assemble(doc.valsByColumn, doc.yCatsByColumn);
-  return `${headers}\n${cols}`;
-};
+const foo = [[11,12,13],[21,22,23],[31,32,33]];
 
-const outputString = `${grid.style(doc.yCats)}\n${grid.container(content())}`;
+const outputString = `<style>${grid.style}</style>
+${grid.content(foo)}`;
 
 // start server and output html
 

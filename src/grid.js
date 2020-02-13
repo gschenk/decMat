@@ -1,55 +1,46 @@
 // provides css strings and functions to build make an html page with grid
-import styles from './css.js';
+import Styles from './css.js';
 
+const zeroToI = (i) => [...Array(i).keys()];
 
 const divs = {
   // item :: String -> String
-  item: (n, m) => (s) => `<div class="grid-item-${m || ''}-${n || ''}">${s}</div>`,
+  item: (m, n) => (s) => `<div class="grid-item-${m}-${n}">${s}</div>`,
   // container :: String -> String
-  container: (s) => `<div class="grid-container">${s}</div>`,
+  container: (s) => `<div class="grid-container">\n${s}\n</div>`,
 };
 Object.freeze(divs);
 
+// contentGrid :: [[String]] -> String
+const contentGrid = (ass) => ass
+  .map((bs, m) => bs.map((s, n) => divs.item(m + 1, n + 1)(s)))
+  .flat()
+  .join('\n');
 
-// Grid class provides methods to generate a css m*n grid
+
+const style = new Styles();
+// styleGrid :: Integer -> Integer -> String
+const styleGrid = (hasHead) => (dimM, dimN) => {
+  const ms = zeroToI(dimM + 1).slice(1);
+  const ns = zeroToI(dimN + 1).slice(1);
+  const head = hasHead ? style.headItem : style.bodyItem;
+  const body = style.bodyItem;
+  const item = (m, n) => (m * n === 0 ? head(m, n) : body(m, n));
+  return ms.map((m) => ns.map((n) => item(m, n)))
+    .flat()
+    .join('');
+};
+
 class Grid {
-// Grid :: Integer -> Object -> Object -> Object
-  constructor(dimN) {
-    // strings and functions to set css styles
-    const {
-      container,
-      itemHead,
-      itemBody,
-    } = styles;
+  constructor(dimM, dimN, hasHead = false) {
+    this.style = `${style.container(dimN)} ${styleGrid(hasHead)(dimM, dimN)}`;
 
-    const zeroToI = (i) => [...Array(i).keys()];
-
-    // this.container :: String -> String
-    this.container = (s) => divs.container(s);
-
-    // this.items :: Integer -> Integer -> [String] -> String
-    this.items = (n, ms) => (a) => a.map((s, i) => divs.item(n, ms ? ms[i] : undefined)(s)).join('\n');
-
-    // this.itemStyle :: Integer -> Integer -> ( Integer -> Function )
-    const itemStyle = (n, m) => (n === 0 ? itemHead : itemBody(n, m));
-
-    // Put elements of css grid styles together, create itemStyle elements up
-    // to dimN elements
-    // assembleStyle :: Integer -> String
-    const assembleStyle = (i) => (ms) => `<styles>
-        ${container(dimN)}
-        ${zeroToI(i + 1).flatMap((n) => ms.map((m) => itemStyle(n, m))).join('\n')}
-      </styles>`;
-
-    // this.styles :: String
-    this.styles = assembleStyle(dimN);
-
-    // assembleDivs :: Integer -> Function -> String
-    const assembleDivs = (i) => (f, g) => zeroToI(i)
-      .flatMap((k) => this.items(k + 1, g(k))(f(k))).join('');
-
-    // this.assemble :: Function -> String
-    this.assemble = assembleDivs(dimN);
+    // content function expects a nested M, N array, where the outer
+    // array holds M arrays of length N. The string value of each
+    // array element will be printed in a grid box corresponding to
+    // its position in the arrays.
+    // content :: [[String]] -> String
+    this.content = (contents) => divs.container(contentGrid(contents));
   }
 }
 
