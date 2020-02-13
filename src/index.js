@@ -54,12 +54,12 @@ const grid = new Grid(doc.dimN);
 
 // put content strings together
 const content = () => {
-  const headers = grid.items(0, doc.cats);
-  const cols = grid.assemble(doc.valsByColumn, grid.items);
+  const headers = grid.items(0)(doc.cats);
+  const cols = grid.assemble(doc.valsByColumn, doc.yCatsByColumn);
   return `${headers}\n${cols}`;
 };
 
-const outputString = `${grid.style}\n${grid.container(content())}`;
+const outputString = `${grid.style(doc.yCats)}\n${grid.container(content())}`;
 
 // start server and output html
 

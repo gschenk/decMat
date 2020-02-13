@@ -20,6 +20,12 @@ function DecisionMatrixO(data) {
   // valsByColumn :: Object -> Integer -> [String]
   const valsByColumn = (o) => (m) => o[cats[m]].map((a) => Object.values(a));
 
+  // returns matching y-category key array to valsByColumn
+  // yCatsByColumn :: Object -> Integer -> [String]
+  const yCatsByColumn = (o) => (m) => o[cats[m]]
+    .map((a) => Object.keys(a))
+    .map((a) => parseInt(a, 10));
+
   // return all y-categories (second level keys) of all columns, unique only
   // ordered by the rank of the first occurence of each unique value
   // yCats :: Object ->
@@ -27,8 +33,8 @@ function DecisionMatrixO(data) {
     .map((p) => Object.keys(p)))
     .flat()
     .flat()
-    .filter((a, i, as) => as.indexOf(a) === i);
-  console.log(yCats(data));
+    .filter((a, i, as) => as.indexOf(a) === i)
+    .map((a) => parseInt(a, 10));
 
   // properties and methods
   // this.cats :: [String]
@@ -48,6 +54,9 @@ function DecisionMatrixO(data) {
 
   // this.valsByColumn :: Integer -> [String]
   this.valsByColumn = valsByColumn(data);
+
+  // this.yCatsByColumn :: Integer -> [String]
+  this.yCatsByColumn = yCatsByColumn(data);
 }
 
 export default DecisionMatrixO;
