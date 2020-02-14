@@ -11,6 +11,21 @@ second category:
 - top item
 ```
 
+Sub categories will form row labels:
+
+```
+first category:
+  good: top item
+  soso: second item
+second category:
+  good: top item
+  bad:  bottom item
+```
+
+This will form a matrix with three rows, labelled 'good',
+'soso', 'bad'. The second column will have a gap in the
+'soso' row. (The `--noheads` switch disables this behaviour.)
+
 Purpose of this is to allow you to write down a decission
 matrix with [stack ranking][1] (not a scorecard) comfortably
 in your prefered editor. Using an unobstrusive syntax
@@ -67,7 +82,7 @@ in the script section in package.json.
 - [x] user specified input file name (or automated)
 
 ### Vertical-Categories
-- [ ] introduce categories along the y-axis
+- [x] introduce categories along the y-axis
 - [ ] non-unique y-categories
 - [ ] option to sort -x and -y categories
 - [ ] option to collate entries of in sub-clusters
