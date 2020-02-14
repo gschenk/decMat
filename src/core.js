@@ -1,40 +1,58 @@
+// categories along horizontal axis
+const xCats = Object.keys;
+
+// return all y-categories (second level keys) of all columns, unique only
+// ordered by the rank of the first occurence of each unique value
+// yCats :: Object -> [String]
+const yCats = (o) => xCats(o).map((k) => o[k]
+  .map((p) => Object.keys(p)))
+  .flat()
+  .flat()
+  .filter((a, i, as) => as.indexOf(a) === i);
+
+// dimM :: Object => Integer
+const dimM = (o) => yCats(o).length;
+
+
+const maxM = (o) => Math.max(...xCats(o).map((k) => o[k].length));
+
+
+// dimM :: Object => Integer
+const dimN = (o) => xCats(o).length;
+
+// reorders data elements in a N x M+1 grid that also includes headers
+const griddify = (o) => xCats(o).map((k) => [
+  k,
+  ...yCats(o).map((l) => o[k].reduce((qs, q) => ({ ...qs, ...q }))[l] || ''),
+]);
+
 // constructor, takes object data as argument
 //    data object contains decision matrix data and structure
 //    where each key is a category of the decision matrix
 //    and has an array of values
-function DecisionMatrixO(data) {
-  const cats = Object.keys(data);
+class Core {
+  constructor(data, headers = true) {
+    // this.cats :: [String]
+    this.cats = xCats(data);
 
-  // dimM is the largest number of values assigned to any key cat of object o.
-  const dimN = cats.length;
+    // dimN is the number of columns
+    this.dimN = dimN(data) + (headers ? 1 : 0);
 
-  // function to get max number of entries per column
-  // dimM :: Object => Integer
-  const dimM = (o) => Math.max(...cats.map((k) => o[k].length));
+    // with headers grid M dimension depends on unique row heads,
+    // without headers the largest column sets M
+    // this.dimM:: Integer
+    this.dimM = headers
+      ? dimM(data) + 1
+      : maxM(data);
 
-  // array [0..i-1]
-  // zeroToI :: Integer -> [Integer]
-  const zeroToI = (i) => [...Array(i).keys()];
-
-  // access values by number of n of category.
-  // valsByColumn :: Object -> Integer -> [String]
-  const valsByColumn = (o) => (m) => o[cats[m]];
-
-  // properties and methods
-  // this.cats :: [String]
-  this.cats = cats;
-
-  // this.dimM :: Integer
-  this.dimN = dimN;
-
-  // this.dimM:: Integer
-  this.dimM = dimM(data);
-
-  // this zeroToM :: [Integer]
-  this.zeroToN = zeroToI(dimN);
-
-  // this.valsByColumn :: Integer -> [String]
-  this.valsByColumn = valsByColumn(data);
+    this.grid = headers
+      ? [['', ...yCats(data)], ...griddify(data)]
+      : [...griddify(data)
+        .map((as) => as.slice(1).filter((a) => a))];
+  }
 }
 
-export default DecisionMatrixO;
+// const core = new Core(test);
+// console.log(core.grid, core.dimM);
+
+export default Core;

@@ -76,31 +76,40 @@ const consolidateReturn = (parts, defaults) => {
     ? { [a]: oTrue[a] }
     : { [a]: oFalse[a] });
 
-  return tools.zipWith(zipper(parts, defaults))(defaultKeys)(keysIncluded).reduce(reducer);
+  return tools
+    .zipWith(zipper(parts, defaults))(defaultKeys)(keysIncluded)
+    .reduce(reducer);
 };
 
-
+// Takes CLI arguments (argv) and checks them against a dictionary of
+// known parameters `knownCliArguments`. Objects from `argumentReturn`
+// matching to the CLI arguments found are collated into the returned object.
+// Default arguments may be returned otherwise, they are provided in
+// `defaultReturn`.
+// In case of errors there are no exceptions thrown but error objects returned.
+// These may be acted upon at the place of call of this function.
+//
+// *This function is pure.*
 // args.getConfig :: String s => [s] -> { s: a } -> { s: s } -> { s: a } -> { s: a }
-class Config {
-  constructor(fullArgs, defaultResults, knownCliArguments, goodCases) {
-    const args = fullArgs.slice(2);
-    Object.freeze(args);
+function Config(fullArgs, defaultResults, knownCliArguments, goodCases) {
+  const args = fullArgs.slice(2);
+  Object.freeze(args);
 
-    // apply all tests in validityTests object on args
-    const tests = validity.tests(2, knownCliArguments);
-    const testsKeys = Object.keys(tests);
-    const testsResults = testsKeys.map((a) => tests[a](args));
+  // apply all tests in validityTests object on args
+  // the first parameter is max number of arguments
+  const tests = validity.tests(3, knownCliArguments);
+  const testsKeys = Object.keys(tests);
+  const testsResults = testsKeys.map((a) => tests[a](args));
 
-    const badReturn = makeBadReturn(testsKeys, testsResults, validity.errorCases);
+  const badReturn = makeBadReturn(testsKeys, testsResults, validity.errorCases);
 
-    const goodReturn = makeGoodReturn(knownCliArguments, goodCases);
+  const goodReturn = makeGoodReturn(knownCliArguments, goodCases);
 
-    const preResults = testsResults.every((a) => a)
-      ? goodReturn(args)
-      : badReturn(args);
+  const preResults = testsResults.every((a) => a)
+    ? goodReturn(args)
+    : badReturn(args);
 
-    return consolidateReturn(preResults, defaultResults);
-  }
+  return consolidateReturn(preResults, defaultResults);
 }
 
 export default Config;
