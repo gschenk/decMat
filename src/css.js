@@ -33,6 +33,7 @@ class Styles {
     } = settings || {};
     this.headItem = item(headOpacity, ...headColour);
     this.bodyItem = item(bodyOpacity, ...bodyColour);
+    this.emptyItem = item(0, ...bodyColour);
     this.container = container(containerColour, gridGap);
   }
 }

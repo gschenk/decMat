@@ -1,6 +1,7 @@
 import http from 'http';
 import data from './data.js';
 import Core from './core.js';
+import Styles from './css.js';
 import Grid from './grid.js';
 import Config from './config.js';
 import tools from './tools.js';
@@ -51,7 +52,8 @@ if (config.verbose) {
 }
 
 // create object with methods to format css grid
-const grid = new Grid(doc.dimM, doc.dimN, true);
+const style = new Styles();
+const grid = new Grid(doc.dimM, doc.dimN, style, true);
 
 // put content strings together
 const outputString = `<style>${grid.style}</style>

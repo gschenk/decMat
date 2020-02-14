@@ -1,5 +1,5 @@
 // provides css strings and functions to build make an html page with grid
-import Styles from './css.js';
+import tools from './tools.js';
 
 const zeroToI = (i) => [...Array(i).keys()];
 
@@ -13,27 +13,36 @@ Object.freeze(divs);
 
 // contentGrid :: [[String]] -> String
 const contentGrid = (ass) => ass
-  .map((bs, n) => bs.map((s, m) => divs.item(m + 1, n + 1)(s)))
+  .map((bs, n) => bs.map((s, m) => (s !== ''
+    ? divs.item(m + 1, n + 1)(s)
+    : '')))
   .flat()
   .join('\n');
 
 
-const style = new Styles();
+const whichItem = (style) => (m, n) => {
+  const token = `${m > 1 ? 'm' : 1}${n > 1 ? 'n' : 1}`;
+  const cases = {
+    11: style.emptyItem(m, n),
+    m1: style.headItem(m, n),
+    '1n': style.headItem(m, n),
+  };
+  return tools.pureSwitch(cases)(style.bodyItem(m, n))(token);
+};
+
 // styleGrid :: Integer -> Integer -> String
-const styleGrid = (hasHead) => (dimM, dimN) => {
+const styleGrid = (itemF) => (dimM, dimN) => {
   const ms = zeroToI(dimM + 1).slice(1);
   const ns = zeroToI(dimN + 1).slice(1);
-  const head = hasHead ? style.headItem : style.bodyItem;
-  const body = style.bodyItem;
-  const item = (m, n) => (m === 1 || n === 1 ? head(m, n) : body(m, n));
-  return ms.map((m) => ns.map((n) => item(m, n)))
+  return ms.map((m) => ns.map((n) => itemF(m, n)))
     .flat()
     .join('');
 };
 
 class Grid {
-  constructor(dimM, dimN, hasHead = false) {
-    this.style = `${style.container(dimN)} ${styleGrid(hasHead)(dimM, dimN)}`;
+  constructor(dimM, dimN, style, hasHead = false) {
+    const strStyleGrid = styleGrid(hasHead ? whichItem(style) : style.bodyItem)(dimM, dimN);
+    this.style = `${style.container(dimN)} ${strStyleGrid}`;
 
     // content function expects a nested M, N array, where the outer
     // array holds N arrays of length M. Each inner array represents a column
