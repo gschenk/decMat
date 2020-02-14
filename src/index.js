@@ -40,7 +40,7 @@ const inFilePath = config.stdin ? 0 : config.file;
 if (config.verbose) console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath}`);
 
 // create object with data from yaml input and methods
-const doc = new Core(input.comprehend(data.readYaml(inFilePath)));
+const doc = new Core(input.comprehend(data.readYaml(inFilePath)), config.heads);
 
 if (config.verbose) {
   console.log(
@@ -53,7 +53,7 @@ if (config.verbose) {
 
 // create object with methods to format css grid
 const style = new Styles();
-const grid = new Grid(doc.dimM, doc.dimN, style, true);
+const grid = new Grid(doc.dimM, doc.dimN, style, config.heads);
 
 // put content strings together
 const outputString = `<style>${grid.style}</style>
