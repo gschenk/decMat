@@ -96,7 +96,8 @@ function Config(fullArgs, defaultResults, knownCliArguments, goodCases) {
   Object.freeze(args);
 
   // apply all tests in validityTests object on args
-  const tests = validity.tests(2, knownCliArguments);
+  // the first parameter is max number of arguments
+  const tests = validity.tests(3, knownCliArguments);
   const testsKeys = Object.keys(tests);
   const testsResults = testsKeys.map((a) => tests[a](args));
 

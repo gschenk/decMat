@@ -66,10 +66,11 @@ in the script section in package.json.
 - [x] make neat css output
 - [x] user specified input file name (or automated)
 
-### Possible Extensions
-- [ ] move layout options to config yaml
-- [ ] weight class for matrix items
-- [ ] add embelishments like legends
+### Vertical-Categories
+- [ ] introduce categories along the y-axis
+- [ ] non-unique y-categories
+- [ ] option to sort -x and -y categories
+- [ ] option to collate entries of in sub-clusters
 
 
 [1]: https://www.geekwire.com/2012/job-decision-matrix/

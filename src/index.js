@@ -1,10 +1,12 @@
 import http from 'http';
 import data from './data.js';
-import DecisionMatrixO from './core.js';
+import Core from './core.js';
+import Styles from './css.js';
 import Grid from './grid.js';
 import Config from './config.js';
 import tools from './tools.js';
 import defaults from './defaults.js';
+import input from './input.js';
 
 const config = new Config(
   process.argv,
@@ -38,27 +40,24 @@ const inFilePath = config.stdin ? 0 : config.file;
 if (config.verbose) console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath}`);
 
 // create object with data from yaml input and methods
-const doc = new DecisionMatrixO(data.readYaml(inFilePath));
+const doc = new Core(input.comprehend(data.readYaml(inFilePath)), config.heads);
 
 if (config.verbose) {
   console.log(
     `${doc.dimM}x${doc.dimN} matrix with categories:`,
     doc.cats,
-    `and values ${doc.zeroToN.map(doc.valsByColumn)}.\n`,
+    'and content',
+    doc.grid,
   );
 }
 
 // create object with methods to format css grid
-const grid = new Grid(doc.dimN);
+const style = new Styles();
+const grid = new Grid(doc.dimM, doc.dimN, style, config.heads);
 
 // put content strings together
-const content = () => {
-  const headers = grid.items(0, doc.cats);
-  const cols = grid.assemble(doc.valsByColumn, grid.items);
-  return `${headers}\n${cols}`;
-};
-
-const outputString = `${grid.style}\n${grid.container(content())}`;
+const outputString = `<style>${grid.style}</style>
+${grid.content(doc.grid)}`;
 
 // start server and output html
 
