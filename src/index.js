@@ -1,6 +1,6 @@
 import http from 'http';
 import data from './data.js';
-import DecisionMatrixO from './core.js';
+import Core from './core.js';
 import Grid from './grid.js';
 import Config from './config.js';
 import tools from './tools.js';
@@ -39,24 +39,23 @@ const inFilePath = config.stdin ? 0 : config.file;
 if (config.verbose) console.log(`Input file: ${config.stdin ? 'STDIN' : inFilePath}`);
 
 // create object with data from yaml input and methods
-const doc = new DecisionMatrixO(input.comprehend(data.readYaml(inFilePath)));
+const doc = new Core(input.comprehend(data.readYaml(inFilePath)));
 
 if (config.verbose) {
   console.log(
     `${doc.dimM}x${doc.dimN} matrix with categories:`,
     doc.cats,
-    `and values ${doc.zeroToN.map(doc.valsByColumn)}.\n`,
+    'and content',
+    doc.grid,
   );
 }
 
 // create object with methods to format css grid
-const grid = new Grid(doc.dimN, doc.dimN, true);
+const grid = new Grid(doc.dimM, doc.dimN, true);
 
 // put content strings together
-const foo = [[11,12,13],[21,22,23],[31,32,33]];
-
 const outputString = `<style>${grid.style}</style>
-${grid.content(foo)}`;
+${grid.content(doc.grid)}`;
 
 // start server and output html
 

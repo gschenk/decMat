@@ -13,7 +13,7 @@ Object.freeze(divs);
 
 // contentGrid :: [[String]] -> String
 const contentGrid = (ass) => ass
-  .map((bs, m) => bs.map((s, n) => divs.item(m + 1, n + 1)(s)))
+  .map((bs, n) => bs.map((s, m) => divs.item(m + 1, n + 1)(s)))
   .flat()
   .join('\n');
 
@@ -25,7 +25,7 @@ const styleGrid = (hasHead) => (dimM, dimN) => {
   const ns = zeroToI(dimN + 1).slice(1);
   const head = hasHead ? style.headItem : style.bodyItem;
   const body = style.bodyItem;
-  const item = (m, n) => (m * n === 0 ? head(m, n) : body(m, n));
+  const item = (m, n) => (m === 1 || n === 1 ? head(m, n) : body(m, n));
   return ms.map((m) => ns.map((n) => item(m, n)))
     .flat()
     .join('');
@@ -36,9 +36,9 @@ class Grid {
     this.style = `${style.container(dimN)} ${styleGrid(hasHead)(dimM, dimN)}`;
 
     // content function expects a nested M, N array, where the outer
-    // array holds M arrays of length N. The string value of each
-    // array element will be printed in a grid box corresponding to
-    // its position in the arrays.
+    // array holds N arrays of length M. Each inner array represents a column
+    // The string value of each array element will be printed in a grid box
+    // corresponding to its position in the arrays.
     // content :: [[String]] -> String
     this.content = (contents) => divs.container(contentGrid(contents));
   }
